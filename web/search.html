@@ -24,6 +24,14 @@
       background-color: #f2f2f2;
       padding: 25px;
     }
+/* nav bar search box - drop down menu button */
+.navbar .navbar-search .dropdown-menu { min-width: 25px; }
+.dropdown-menu .label-icon { margin-left: 5px; }
+.btn-outline {
+    background-color: transparent;
+    color: inherit;
+    transition: all .5s;
+}
   </style>
 </head>
 <body>
@@ -58,33 +66,43 @@
   </div>
 </nav>
 
-<div class="container">    
-  <div class="row">
-    <div class="col-sm-4">
-      <div class="panel panel-primary">
-        <div class="panel-heading">FEATURED BOOK</div>
-        <div class="panel-body"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image"></div>
-        <div class="panel-footer">Featured Book #1</div>
-      </div>
-    </div>
-    <div class="col-sm-4"> 
-      <div class="panel panel-danger">
-        <div class="panel-heading">FEATURED BOOK</div>
-        <div class="panel-body"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image"></div>
-        <div class="panel-footer">Featured Book #2</div>
-      </div>
-    </div>
-    <div class="col-sm-4"> 
-      <div class="panel panel-success">
-        <div class="panel-heading">FEATURED BOOK</div>
-        <div class="panel-body"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image"></div>
-        <div class="panel-footer">Featured Book #3</div>
-      </div>
-    </div>
-  </div>
-</div><br>
-
-
+<div class="container">
+	<div class="row">
+		
+ <nav class="navbar navbar-default">
+        <div class="nav nav-justified navbar-nav">
+ 
+            <form class="navbar-form navbar-search" role="search">
+                <div class="input-group">
+                
+                    <div class="input-group-btn">
+                       
+                        <div class="form-group">
+  						<label for="sel1">Select list:</label>
+  						<select class="form-control" id="sel1">
+   						<option>Search by Title</option>
+   						<option>Search by Author</option>
+    					<option>Search by ISBN</option>
+  						</select>
+						</div>
+                    </div>
+        
+                    <input type="text" class="form-control">
+                
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-search btn-default">
+                        GO
+                        </button>
+                         
+                         
+                    </div>
+                </div>  
+            </form>   
+         
+        </div>
+    </nav>
+	</div>
+</div>
 
 <footer class="container-fluid text-center">
   <p>Byte Bookstore 2017</p>  
