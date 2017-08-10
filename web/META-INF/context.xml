@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/ByteBookstore"/>
+<Context path="/ByteBookstore">
+    <Resource
+        name="jdbc/BookStoreDB"
+        auth="Container"
+        type="javax.sql.DataSource"
+        maxActive="100"
+        maxIdle="30"
+        maxWait="10000"
+        driverClassName="com.mysql.jdbc.Driver"
+        url="jdbc:mysql://174.138.66.55:3306/bytebooks"
+        username="bbuser"
+        password="11BBuser!!"
+    />
+</Context>
