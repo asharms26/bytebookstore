@@ -17,8 +17,8 @@ import javax.sql.DataSource;
 public interface InventoryDao {
     public void setDataSource(DataSource ds);
     public boolean create(Inventory model);
-    public Inventory getERModel(Integer id);
-    public List<Inventory> getAllERModels(Integer id);
+    public Inventory getInventoryModel(Integer id);
+    public List<Inventory> getAllInventoryModels(Integer id);
     public boolean delete(Inventory model);
     public boolean update(Inventory model);
 }

@@ -7,6 +7,8 @@ package com.bytebookstore.daoimpl;
 
 import com.bytebookstore.dao.BookAutDao;
 import com.bytebookstore.models.Author;
+import com.bytebookstore.utilities.DBUtility;
+import java.sql.Connection;
 import java.util.List;
 import javax.sql.DataSource;
 
@@ -16,23 +18,32 @@ import javax.sql.DataSource;
  */
 public class BookAutDaoImpl implements BookAutDao{
 
+    DataSource ds;
+    
     @Override
     public void setDataSource(DataSource ds) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.ds = ds;
     }
 
     @Override
     public boolean create(Author model) {
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return valid; 
+    }
+
+    @Override
+    public Author getBookAutModel(Integer id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Author getERModel(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Author> getAllERModels(Integer id) {
+    public List<Author> getAllBookAutModels(Integer id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

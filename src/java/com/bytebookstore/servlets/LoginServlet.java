@@ -5,7 +5,12 @@ package com.bytebookstore.servlets;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.bytebookstore.daoimpl.RegDataDaoImpl;
+import com.bytebookstore.daoimpl.UserDaoImpl;
+import com.bytebookstore.models.RegData;
+import com.bytebookstore.models.User;
 import com.bytebookstore.utilities.DBUtility;
+import com.bytebookstore.utilities.Utility;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -17,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -36,14 +42,42 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try {
-            Connection conn = DBUtility.ds.getConnection();
-            ResultSet st = conn.createStatement().executeQuery("select * from AUTHOR");
-            System.out.println(conn.getClientInfo());
+        try (Connection conn = DBUtility.ds.getConnection()) {
+            
+            String firstName = request.getParameter("first-name");
+            String lastName = request.getParameter("last-name");
+            String password = request.getParameter("first-pass");
+            String email = request.getParameter("registration-email");
+            boolean privilege = false;
+            
+            User user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setPrivilege(privilege);
+            
+            String hashedPass = Utility.hashPassword(password);
+            RegData regData = new RegData();
+            regData.setPw(hashedPass);
+            
+            UserDaoImpl userDao = new UserDaoImpl();
+            userDao.create(user);
+            
+            RegDataDaoImpl regDao = new RegDataDaoImpl();
+            regDao.create(regData);
+            
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            out.print("{\"status\":\"success\"}");
+            out.flush();
+            
         } catch (Exception ex) {
-
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            out.print("{\"status\":\"failure\"}");
+            out.flush();
         }
-
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

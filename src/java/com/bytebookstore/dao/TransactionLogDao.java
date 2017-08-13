@@ -17,8 +17,8 @@ import javax.sql.DataSource;
 public interface TransactionLogDao {
     public void setDataSource(DataSource ds);
     public boolean create(TransactionLog model);
-    public TransactionLog getERModel(Integer id);
-    public List<TransactionLog> getAllERModels(Integer id);
+    public TransactionLog getTransactionLogModel(Integer id);
+    public List<TransactionLog> getAllTransactionLogModels(Integer id);
     public boolean delete(TransactionLog model);
     public boolean update(TransactionLog model);
 }

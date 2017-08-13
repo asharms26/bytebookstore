@@ -8,7 +8,7 @@
         maxIdle="30"
         maxWait="10000"
         driverClassName="com.mysql.jdbc.Driver"
-        url="jdbc:mysql://174.138.66.55:3306/bytebooks"
+        url="jdbc:mysql://174.138.66.55:3306/bytebooks?noAccessToProcedureBodies=true"
         username="bbuser"
         password="11BBuser!!"
     />

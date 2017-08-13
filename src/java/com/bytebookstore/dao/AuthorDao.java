@@ -16,8 +16,8 @@ import javax.sql.DataSource;
 public interface AuthorDao {
     public void setDataSource(DataSource ds);
     public boolean create(Author model);
-    public Author getERModel(Integer id);
-    public List<Author> getAllERModels(Integer id);
+    public Author getAuthorModel(Integer id);
+    public List<Author> getAllAuthorModels(Integer id);
     public boolean delete(Author model);
     public boolean update(Author model);
 }

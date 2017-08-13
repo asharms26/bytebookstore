@@ -7,6 +7,9 @@ package com.bytebookstore.daoimpl;
 
 import com.bytebookstore.dao.AuthorDao;
 import com.bytebookstore.models.Author;
+import com.bytebookstore.utilities.DBUtility;
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
 
@@ -16,34 +19,69 @@ import javax.sql.DataSource;
  */
 public class AuthorDaoImpl implements AuthorDao {
 
+    DataSource ds;
+    
     @Override
     public void setDataSource(DataSource ds) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.ds = ds;
     }
 
     @Override
     public boolean create(Author model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return valid;
     }
 
     @Override
-    public Author getERModel(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Author getAuthorModel(Integer id) {
+        Author author = new Author();
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return author;
     }
 
     @Override
-    public List<Author> getAllERModels(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Author> getAllAuthorModels(Integer id) {
+        List<Author> author = new ArrayList<>();
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return author;
     }
 
     @Override
     public boolean delete(Author model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return valid;
     }
 
     @Override
     public boolean update(Author model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return valid;
     }
     
 }

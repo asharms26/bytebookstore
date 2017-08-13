@@ -17,8 +17,8 @@ import javax.sql.DataSource;
 public interface BookDao {
     public void setDataSource(DataSource ds);
     public boolean create(Book model);
-    public Book getERModel(Integer id);
-    public List<Book> getAllERModels(Integer id);
+    public Book getBookModel(Integer id);
+    public List<Book> getAllBookModels(Integer id);
     public boolean delete(Book model);
     public boolean update(Book model);
 }

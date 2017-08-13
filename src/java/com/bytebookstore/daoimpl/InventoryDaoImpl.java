@@ -7,6 +7,8 @@ package com.bytebookstore.daoimpl;
 
 import com.bytebookstore.dao.InventoryDao;
 import com.bytebookstore.models.Inventory;
+import com.bytebookstore.utilities.DBUtility;
+import java.sql.Connection;
 import java.util.List;
 import javax.sql.DataSource;
 
@@ -23,27 +25,48 @@ public class InventoryDaoImpl implements InventoryDao{
 
     @Override
     public boolean create(Inventory model) {
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return valid;
+    }
+
+    @Override
+    public Inventory getInventoryModel(Integer id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Inventory getERModel(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Inventory> getAllERModels(Integer id) {
+    public List<Inventory> getAllInventoryModels(Integer id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public boolean delete(Inventory model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return valid;
     }
 
     @Override
     public boolean update(Inventory model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return valid;
     }
     
 }

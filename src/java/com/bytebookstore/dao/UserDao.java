@@ -17,8 +17,8 @@ import javax.sql.DataSource;
 public interface UserDao {
     public void setDataSource(DataSource ds);
     public boolean create(User model);
-    public User getERModel(Integer id);
-    public List<User> getAllERModels(Integer id);
+    public User getUserModel(Integer id);
+    public List<User> getAllUserModels(Integer id);
     public boolean delete(User model);
     public boolean update(User model);
 }

@@ -14,7 +14,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private byte privilege;
+    private boolean privilege;
 
     public int getLogkey_id() {
         return logkey_id;
@@ -48,11 +48,11 @@ public class User {
         this.email = email;
     }
 
-    public byte getPrivilege() {
+    public boolean getPrivilege() {
         return privilege;
     }
 
-    public void setPrivilege(byte privilege) {
+    public void setPrivilege(boolean privilege) {
         this.privilege = privilege;
     }
 }
