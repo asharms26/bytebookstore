@@ -1,0 +1,9 @@
+.main { position: relative; width: 800px; height:40px; }
+.cell_1 { position: absolute; left:0px; top:0px; width: 150px; height:40px; }
+.cell_2 { position: absolute; left:150px; top:0px; width: 200px; height:40px; }
+.cell_3 { position: absolute; left:350px; top:0px; width: 1500px; height:40px; }
+.cell_4 { position: absolute; left:500px; top:0px; width: 100px; height:40px; }
+.cell_5 { position: absolute; left:600px; top:0px; width: 100px; height:40px; }
+.cell_6 { position: absolute; left:700px; top:0px; width: 100px; height:40px; }
+.cell_6_1 { position: absolute; left:700px; top:0px; width: 50px; height:40px; }
+.cell_7 { position: absolute; left:750px; top:0px; width: 50px; height:40px; }

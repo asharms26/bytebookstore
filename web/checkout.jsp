@@ -1,3 +1,9 @@
+<%-- 
+    Document   : checkout
+    Created on : Aug 13, 2017, 6:35:24 PM
+    Author     : mbenso14
+--%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +13,8 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="script/cc_validate.js"></script>
+  
   <style>
     /* Remove the navbar's default rounded borders and increase the bottom margin */ 
     .navbar {
@@ -24,14 +32,6 @@
       background-color: #f2f2f2;
       padding: 25px;
     }
-/* nav bar search box - drop down menu button */
-.navbar .navbar-search .dropdown-menu { min-width: 25px; }
-.dropdown-menu .label-icon { margin-left: 5px; }
-.btn-outline {
-    background-color: transparent;
-    color: inherit;
-    transition: all .5s;
-}
   </style>
 </head>
 <body>
@@ -66,39 +66,36 @@
   </div>
 </nav>
 
-<div class="container">
-	<div class="row">
-		
- <nav class="navbar navbar-default">
-        <div class="nav nav-justified navbar-nav">
- 
-            <form class="navbar-form navbar-search" role="search" action="search" method="post">
-                <div class="input-group">
-                
-                    <div class="input-group-btn">
-                       
-                        <div class="form-group">
-                            <label for="sel1">Select list:</label>
-                            <select class="form-control" name="querySel" id="sel1">
-                                <option>Search by Title</option>
-                                <option>Search by Author</option>
-                                <option>Search by ISBN</option>
-                            </select>
-                        </div>
-                    </div>
-        
-                    <input type="text" name="queryString" class="form-control">
-                
-                    <div class="input-group-btn">
-                        <input type="submit" name="action" Value="Go" class="btn btn-search btn-default">           
-                    </div>
-                </div>  
-            </form>   
-         
-        </div>
-    </nav>
-	</div>
-</div>
+
+!!! DISPLAY CART CONTENTS !!!!
+
+<br><hr><br>
+
+<form name="cc_validate" action="" onsubmit="return validateForm()" method="post">
+
+<fieldset>
+    <legend>Payment Details</legend>
+
+    <table>
+        <tr><td>Credit Card Type</td>
+        <td><input type="radio" name="cardtype" value="VISA" checked>VISA
+        <input type="radio" name="cardtype" value="MasterCard">Master Card
+        <input type="radio" name="cardtype" value="Discover">Discover</td></tr>
+
+
+        <tr><td>Credit Card Number</td>
+        <td><input type="text" name="cardnumber"></td></tr>
+
+        <tr><td>Credit Card Expiration Date (MM/YY)</td>
+        <td><input type="text" name="expiry"></td></tr>
+    </table>
+</fieldset>
+
+<br><br>
+
+<input type="submit" value="Confirm Purchase">
+
+</form>
 
 <footer class="container-fluid text-center">
   <p>Byte Bookstore 2017</p>  </br>
