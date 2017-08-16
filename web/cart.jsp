@@ -89,9 +89,16 @@
         out.println("<div class=\"main\"><div class=\"cell_1\">Title - Author</div>");
         out.println("<div class=\"cell_2\">ISBN</div><div class=\"cell_3\">Quantity</div><div class=\"cell_4\">Item Price</div>");
         out.println("<div class=\"cell_5\">Total Cost</div></div>");
+    } else {
+        out.println("<div class=\"main\">Cart Is Empty</div>");
     }
+    
     for(int i=0; i<cart.getItemCount(); i++) {
-        out.println("<div class=\"main\">");
+        if(i%2==0){
+            out.println("<div class=\"back1\">");
+        } else {
+            out.println("<div class=\"back2\">");
+        }
         out.println("<div class=\"cell_1\">" + cart.getCartItem(i).getTitle() + " - " + cart.getCartItem(i).getFirstName() + " " + cart.getCartItem(i).getLastName() + "</div>");
         out.println("<div class=\"cell_2\">" + cart.getCartItem(i).getISBN() + "</div>");
         out.println("<div class=\"cell_3\">" + cart.getCartItem(i).getQuantity() + "</div>");
@@ -100,6 +107,10 @@
         out.println("<div class=\"cell_6_1\"><button type=\"submit\" name=\"action\" Value=\"" + cart.getCartItem(i).getISBN() + "\";\">+</button></div>");
         out.println("<div class=\"cell_7\"><button type=\"submit\" name=\"remove\" Value=\"" + cart.getCartItem(i).getISBN() + "\";\">-</button></div></div>");
     }
+    
+    out.println("<div class=\"main\">");
+    out.println("<div class=\"cell_4\">Total:</div>");
+    out.println("<div class=\"cell_5\">$" + String.format("%.2f",cart.getTotalCost()) + "</div></div>");
     
     out.println("</form>");
     %>

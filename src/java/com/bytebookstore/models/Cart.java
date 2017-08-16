@@ -15,6 +15,15 @@ import java.util.Iterator;
 public class Cart {
     private ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
     
+    public double getTotalCost() {
+        double cost = 0;
+        for(CartItem c : cartItems) {
+            cost = cost + c.getQuantity() * c.getPrice();
+        }
+        
+        return cost;
+    }
+    
     public int getItemCount() {
         return cartItems.size();
     }

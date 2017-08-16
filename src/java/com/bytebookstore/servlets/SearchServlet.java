@@ -165,7 +165,7 @@ public class SearchServlet extends HttpServlet {
                     out.println("</div>");
 
                     
-                    out.println("<div class=\"main\">");
+                    out.println("<div class=\"back1\">");
                     out.println("<div class=\"cell_1\">" + st.getString("image") + "</div>");
                     out.println("<div class=\"cell_2\">" + st.getString("title") + " - " + st.getString("firstname") + " " + st.getString("lastname") + "</div>");
                     out.println("<div class=\"cell_3\">" + st.getString("ISBN") + "</div>");
@@ -174,8 +174,17 @@ public class SearchServlet extends HttpServlet {
                     out.println("<div class=\"cell_6\"><button type=\"submit\" name=\"action\" Value=\"" + st.getString("ISBN") + "\";\">Add To Cart</button></div>");
                     out.println("</div>");
                     
+                    int k=0;
+                    
                     while(st.next()) {
-                        out.println("<div class=\"main\">");
+                        if(k%2==0){
+                            out.println("<div class=\"back2\">");
+                        }else{
+                            out.println("<div class=\"back1\">");
+                        }
+                        
+                        k = k + 1;
+                        
                         out.println("<div class=\"cell_1\">" + st.getString("image") + "</div>");
                         out.println("<div class=\"cell_2\">" + st.getString("title") + " - " + st.getString("firstname") + " " + st.getString("lastname") + "</div>");
                         out.println("<div class=\"cell_3\">" + st.getString("ISBN") + "</div>");
