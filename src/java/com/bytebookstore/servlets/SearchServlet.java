@@ -46,24 +46,40 @@ public class SearchServlet extends HttpServlet {
 
             try {
                 Connection conn = DBUtility.ds.getConnection();
-
-                if (querySel.equals("Search by Title")) {
-                    if (queryString != null) {
+                
+                if (!queryString.equals(""))
+                    queryString = queryString.replaceAll("[^a-zA-Z0-9 ]", "");
+                
+                if (querySel.equals("Search by Title")) {                    
+                    if (!queryString.equals("")) {
                         query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where title LIKE \"%" + queryString + "%\";";
                     } else {
                         query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
                     }
                 }else if (querySel.equals("Search by Author")) {
-                    if (queryString != null) {
-                        query = "select * from AUTHOR where lastname LIKE \"%"+ queryString +"%\";";
+
+                    if (!queryString.equals("")) {
+                        String words[] = queryString.split("\\s+");
+                        String wordlist;
+                        
+                        wordlist = "(\'" + words[0];
+
+                        for(int i=1; i<words.length; i++) { 
+                            wordlist = wordlist + "\',\'" + words[i];
+                        }
+                        
+                        wordlist = wordlist + "\')";
+                                                
+                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where (AUTHOR.lastname IN " + wordlist + " OR AUTHOR.firstname IN " + wordlist + ");";
                     } else {
-                        query = "select * from BOOK;";
+                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
                     }
                 }else if (querySel.equals("Search by ISBN")){
-                    if (queryString != null) {
-                        query = "select * from BOOK where ISBN LIKE \"%" + queryString + "%\";";
+
+                    if (!queryString.equals("")) {
+                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where BOOK.ISBN LIKE \"%" + queryString + "%\";";
                     } else {
-                        query = "select * from BOOK;";
+                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
                     }
                 }
                 
@@ -194,6 +210,8 @@ public class SearchServlet extends HttpServlet {
                         out.println("</div>");
                     }
 
+                    conn.close();
+                    
                     out.println("</form>");
                 } else
                     out.println("<h1>No Results</h1>");
