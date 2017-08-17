@@ -9,3 +9,11 @@
 .cell_7 { position: absolute; left:750px; top:0px; width: 50px; height:40px; }
 .back1 { position: relative; height:40px; background-color:#cccccc; }
 .back2 { position: relative; height:40px; background-color:#f2f2f2; }
+.main { position: relative; width: 800px; height:30px; }
+.c_cell_1 { position: absolute; left:0px; top:0px; width: 250px; height:30px; }
+.c_cell_2 { position: absolute; left:250px; top:0px; width: 250px; height:30px; }
+.c_cell_3 { position: absolute; left:500px; top:0px; width: 200px; height:30px; }
+.buyer_info { position: relative; left:30px; width: 800px; height: 200; }
+.c_type_1 { position: absolute; left: 0px; top:0px; width:80px; }
+.c_type_2 { position: absolute; left: 80px; top:0px; width:120px; }
+.c_type_3 { position: absolute; left: 200px; top:0px; width:80px; }
