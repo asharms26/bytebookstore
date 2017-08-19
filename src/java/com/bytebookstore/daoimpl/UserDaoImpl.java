@@ -10,6 +10,7 @@ import com.bytebookstore.models.User;
 import com.bytebookstore.utilities.DBUtility;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
@@ -86,6 +87,23 @@ public class UserDaoImpl implements UserDao{
             valid = false;
         }
         return valid;
+    }
+    
+    public String login(String email, String password){
+        String status = "FALSE";
+        try(Connection conn = DBUtility.ds.getConnection()){
+            CallableStatement cStmt = conn.prepareCall("{call spCheckLogin(?,?,?)}");
+            cStmt.setString(1, email);
+            cStmt.setString(2, password);
+            cStmt.registerOutParameter(3, java.sql.Types.VARCHAR);
+            boolean valid = cStmt.execute();
+            ResultSet set = cStmt.getResultSet();
+            status = set.getString("pResult");
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            status = "FALSE";
+        }
+        return status;
     }
     
 }

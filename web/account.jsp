@@ -5,6 +5,12 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<% 
+
+    boolean value = true;
+
+
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -16,6 +22,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="script/utility.js"></script>
+        
         <style>
             /* Remove the navbar's default rounded borders and increase the bottom margin */ 
             .navbar {
@@ -86,6 +94,7 @@
             </div>
         </nav>
 
+        
         <div class="container" id="account-creation-container">
             <div class="col-md-6">
                 <form id="login-form">
@@ -125,11 +134,15 @@
                         <label><strong>Re-Enter Password</strong></label>
                         <input class="form-control" type="password" placeholder="Re-Enter Password" name="second-pass" required />
                     </div>
+                    
+                    <div class="form-group">
+                        <label><input type="radio" name="privilege" value="false" class="radio radio-inline" style="vertical-align:top;margin-right:10px;"/>Buyer</label><br/>
+                        <label><input type="radio" name="privilege" value="true" class="radio radio-inline" style="vertical-align:top;margin-right:10px;"/>Merchant</label>
+                    </div>
 
                     <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
 
                     <div class="clearfix">
-                        <button class="btn btn-default">Cancel</button>
                         <input type="submit" class="btn btn-default"/>
                     </div>   
                 </form>
@@ -139,11 +152,12 @@
         <div id="modal" title="Registration Status">
             <p id="modal-content"></p>
         </div>
+        
 
         <script>
 
             var dialogCloseSuccess = function () {
-                window.location.href = "Dashboard";
+                window.location.reload();
             }
 
             var dialogCloseFailure = function () {
@@ -194,22 +208,58 @@
             $("#registration-form").submit(function (e) {
                 e.preventDefault();
                 if (checkPasswords()) {
-                    var route = "LoginServlet";
+                    var route = "RegistrationServlet";
                     var dat = $(this).serializeArray();
                     var success = function (response) {
                         if (response.status == "success") {
-                            $("#modal-content").html("Success you have registered!");
+                            $("#modal-content").html("Success you have registered! Please login on page reload.");
                             showDialog(dialogCloseSuccess);
                         } else {
                             $("#modal-content").html("There was an error in registration!");
                             showDialog(dialogCloseFailure);
                         }
+                        hideLoadingGif();
                     }
 
                     var error = function (response) {
                         alert("There was an error in your registration!");
                     }
+                    showLoadingGif();
+                    doPost(route, dat, success, error);
+                } else {
+                    alert("Passwords don't match!");
+                }
+            });
+            
+            $("#login-form").submit(function (e) {
+                e.preventDefault();
+                if (checkPasswords()) {
+                    var route = "LoginServlet";
+                    var dat = $(this).serializeArray();
+                    var success = function (response) {
+                        if (response.status == "success") {
+                            $("#modal-content").html("Success you have logged in!");
+                            showDialog(dialogCloseSuccess);
+                        } else {
+                            var type = response.status.split("-")[1];
+                            var msg = "";
+                            if(type == "PW"){
+                                msg = "Password not correct!";
+                            } else if(type == "USER"){
+                                msg = "User does not exist!";
+                            } else {
+                                msg = "There was an error in login. Please contact us!";
+                            }
+                            $("#modal-content").html(msg);
+                            showDialog(dialogCloseFailure);
+                        }
+                        hideLoadingGif();
+                    }
 
+                    var error = function (response) {
+                        alert("There was an error in your registration!");
+                    }
+                    showLoadingGif();
                     doPost(route, dat, success, error);
                 } else {
                     alert("Passwords don't match!");

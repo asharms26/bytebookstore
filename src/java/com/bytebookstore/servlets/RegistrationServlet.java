@@ -1,10 +1,10 @@
-package com.bytebookstore.servlets;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package com.bytebookstore.servlets;
+
 import com.bytebookstore.daoimpl.RegDataDaoImpl;
 import com.bytebookstore.daoimpl.UserDaoImpl;
 import com.bytebookstore.models.RegData;
@@ -14,19 +14,18 @@ import com.bytebookstore.utilities.Utility;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
+
 /**
  *
  * @author wjlax
  */
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "RegistrationServlet", urlPatterns = {"/RegistrationServlet"})
+public class RegistrationServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,16 +41,33 @@ public class LoginServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (Connection conn = DBUtility.ds.getConnection()) {
             
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            String hashedPass = Utility.hashPassword(password);
+            String firstName = request.getParameter("first-name");
+            String lastName = request.getParameter("last-name");
+            String password = request.getParameter("first-pass");
+            String email = request.getParameter("registration-email");
             
-            UserDaoImpl user = new UserDaoImpl();
-            String result = user.login(email, hashedPass);
+            boolean privilege = true;
+            
+            if(request.getParameter("privilege").contains("false")){
+                privilege = false;
+            }
+            
+            User user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setPrivilege(privilege);
+            
+            String hashedPass = Utility.hashPassword(password);
+            RegData regData = new RegData();
+            regData.setPw(hashedPass);
+            
+            RegDataDaoImpl regDao = new RegDataDaoImpl();
+            regDao.register(regData,user);
             
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            out.print("{\"status\":\"success-" + result + "\"}");
+            out.print("{\"status\":\"success\"}");
             out.flush();
             
         } catch (Exception ex) {
@@ -60,7 +76,6 @@ public class LoginServlet extends HttpServlet {
             out.print("{\"status\":\"failure\"}");
             out.flush();
         }
-        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
