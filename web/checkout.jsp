@@ -76,7 +76,7 @@
     <%
     
     if (session.getAttribute("token") == null) {
-        System.out.println("redirect to account.jsp");
+        response.sendRedirect("/ByteBookstore/account.jsp");
     }
         
     out.println("<form class=\"navbar-form navbar-search\" role=\"Cart\" action=\"Cart\" method=\"post\">");

@@ -216,7 +216,7 @@ public class CartController extends HttpServlet {
                                     st = conn.createStatement().executeQuery(query);
 
                                     if(st.next()) {                                        
-                                        cart.addCartItem(add, st.getString("title"), st.getString("firstname"), st.getString("lastname"), st.getDouble("price"), st.getInt("count"));
+                                        cart.addCartItem(add, st.getString("title"), st.getString("firstname"), st.getString("lastname"), st.getDouble("price"));
                                     }
                                 } else {
                                     System.out.println("out of stock");
