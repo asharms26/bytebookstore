@@ -16,6 +16,15 @@ public class CartItem {
     private String firstName;
     private String lastName;
     private double price;
+    private boolean purchased = false;
+
+    public boolean isPurchased() {
+        return purchased;
+    }
+
+    public void setPurchased(boolean purchased) {
+        this.purchased = purchased;
+    }
 
     public double getPrice() {
         return price;

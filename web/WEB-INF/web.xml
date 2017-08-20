@@ -17,6 +17,10 @@
         <servlet-name>cart</servlet-name>
         <servlet-class>com.bytebookstore.servlets.CartController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CartCheckout</servlet-name>
+        <servlet-class>com.bytebookstore.servlets.CartCheckout</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -32,6 +36,10 @@
     <servlet-mapping>
         <servlet-name>cart</servlet-name>
         <url-pattern>/cart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CartCheckout</servlet-name>
+        <url-pattern>/CartCheckout</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

@@ -8,6 +8,7 @@ package com.bytebookstore.servlets;
 import com.bytebookstore.utilities.DBUtility;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,6 +42,8 @@ public class SearchServlet extends HttpServlet {
             String queryString = request.getParameter("queryString");
             String querySel = request.getParameter("querySel");
             String query = "";
+            
+            ResultSet st = null;
 
             String action = request.getParameter("action");
 
@@ -50,11 +53,16 @@ public class SearchServlet extends HttpServlet {
                 if (!queryString.equals(""))
                     queryString = queryString.replaceAll("[^a-zA-Z0-9 ]", "");
                 
-                if (querySel.equals("Search by Title")) {                    
+                if (querySel.equals("Search by Title/ISBN")) {                    
                     if (!queryString.equals("")) {
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where title LIKE \"%" + queryString + "%\";";
+                        CallableStatement cStmt = conn.prepareCall("{call spTitleSearch(?)}");
+                        cStmt.setString(1, queryString);
+                        st = cStmt.executeQuery();
+                        
+//                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where title LIKE \"%" + queryString + "%\";";
                     } else {
                         query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
+                        st = conn.createStatement().executeQuery(query);
                     }
                 }else if (querySel.equals("Search by Author")) {
 
@@ -70,21 +78,19 @@ public class SearchServlet extends HttpServlet {
                         
                         wordlist = wordlist + "\')";
                                                 
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where (AUTHOR.lastname IN " + wordlist + " OR AUTHOR.firstname IN " + wordlist + ");";
+                        CallableStatement cStmt = conn.prepareCall("{call spAuthorNameSearch(?)}");
+                        cStmt.setString(1, queryString);
+                        st = cStmt.executeQuery();
+                        
+//                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where (AUTHOR.lastname IN " + wordlist + " OR AUTHOR.firstname IN " + wordlist + ");";
                     } else {
                         query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
-                    }
-                }else if (querySel.equals("Search by ISBN")){
-
-                    if (!queryString.equals("")) {
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where BOOK.ISBN LIKE \"%" + queryString + "%\";";
-                    } else {
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
+                        st = conn.createStatement().executeQuery(query);
                     }
                 }
                 
-                ResultSet st = conn.createStatement().executeQuery(query);
-                
+                //ResultSet st = conn.createStatement().executeQuery(query);
+
                 out.println("<!DOCTYPE html>");
                 out.println("<html lang=\"en\">");
                 out.println("<head>");
@@ -140,7 +146,7 @@ public class SearchServlet extends HttpServlet {
                 out.println("</ul>");
                 out.println("<ul class=\"nav navbar-nav navbar-right\">");
                 out.println("<li><a href=\"account.jsp\"><span class=\"glyphicon glyphicon-user\"></span> Your Account</a></li>");
-                out.println("<li><a href=\"cart.jsp\"><span class=\"glyphicon glyphicon-shopping-cart\"></span> Cart</a></li>");
+                out.println("<li><a href=\\ByteBookstore\\Cart><span class=\"glyphicon glyphicon-shopping-cart\"></span> Cart</a></li>");
                 out.println("</ul>");
                 out.println("</div>");
                 out.println("</div>");
@@ -155,7 +161,7 @@ public class SearchServlet extends HttpServlet {
                 out.println("<div class=\"form-group\">");
                 out.println("<label for=\"sel1\">Select list:</label>");
                 out.println("<select class=\"form-control\" name=\"querySel\" id=\"sel1\">");
-                out.println("<option>Search by Title</option>");
+                out.println("<option>Search by Title/ISBN</option>");
                 out.println("<option>Search by Author</option>");
                 out.println("<option>Search by ISBN</option>");
                 out.println("</select>");
@@ -187,7 +193,7 @@ public class SearchServlet extends HttpServlet {
                     out.println("<div class=\"cell_3\">" + st.getString("ISBN") + "</div>");
                     out.println("<div class=\"cell_4\">Cost</div>");
                     out.println("<div class=\"cell_5\">"+ st.getString("count") + "</div>");
-                    out.println("<div class=\"cell_6\"><button type=\"submit\" name=\"action\" Value=\"" + st.getString("ISBN") + "\";\">Add To Cart</button></div>");
+                    out.println("<div class=\"cell_6\"><button type=\"submit\" name=\"add\" Value=\"" + st.getString("ISBN") + "\";\">Add To Cart</button></div>");
                     out.println("</div>");
                     
                     int k=0;
@@ -206,7 +212,7 @@ public class SearchServlet extends HttpServlet {
                         out.println("<div class=\"cell_3\">" + st.getString("ISBN") + "</div>");
                         out.println("<div class=\"cell_4\">Cost</div>");
                         out.println("<div class=\"cell_5\">"+ st.getString("count") + "</div>");
-                        out.println("<div class=\"cell_6\"><button type=\"submit\" name=\"action\" Value=\"" + st.getString("ISBN") + "\";\">Add To Cart</button></div>");
+                        out.println("<div class=\"cell_6\"><button type=\"submit\" name=\"add\" Value=\"" + st.getString("ISBN") + "\";\">Add To Cart</button></div>");
                         out.println("</div>");
                     }
 

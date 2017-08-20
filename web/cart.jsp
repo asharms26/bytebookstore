@@ -36,6 +36,8 @@
 
   <%@ page import="com.bytebookstore.models.Cart" %>
   <% Cart cart = (Cart)session.getAttribute("cart"); %>
+  <% int token = (Integer) session.getAttribute("token"); %>
+  
 </head>
 <body>
 
@@ -63,7 +65,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
-        <li><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+        <li><a href="/ByteBookstore/Cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
       </ul>
     </div>
   </div>
@@ -77,14 +79,8 @@
     
     <%
         
-    out.println("<form class=\"navbar-form navbar-search\" role=\"Cart\" action=\"Cart\" method=\"post\">");
+    out.println("<form class=\"navbar-form navbar-search\" role=\"Cart\" action=\"Cart\" method=\"post\">");    
 
-    if (session.getAttribute("cart") == null) {
-        cart = new Cart();
-    } else {
-        cart = (Cart) session.getAttribute("cart");
-    }
-    
     if(cart.getItemCount()>0){
         out.println("<div class=\"main\"><div class=\"cell_1\">Title - Author</div>");
         out.println("<div class=\"cell_2\">ISBN</div><div class=\"cell_3\">Quantity</div><div class=\"cell_4\">Item Price</div>");
@@ -104,7 +100,7 @@
         out.println("<div class=\"cell_3\">" + cart.getCartItem(i).getQuantity() + "</div>");
         out.println("<div class=\"cell_4\">$"+ String.format("%.2f",cart.getCartItem(i).getPrice()) +"</div>");
         out.println("<div class=\"cell_5\">$"+ String.format("%.2f",cart.getCartItem(i).getPrice() * cart.getCartItem(i).getQuantity()) +"</div>");
-        out.println("<div class=\"cell_6_1\"><button type=\"submit\" name=\"action\" Value=\"" + cart.getCartItem(i).getISBN() + "\";\">+</button></div>");
+        out.println("<div class=\"cell_6_1\"><button type=\"submit\" name=\"add\" Value=\"" + cart.getCartItem(i).getISBN() + "\";\">+</button></div>");
         out.println("<div class=\"cell_7\"><button type=\"submit\" name=\"remove\" Value=\"" + cart.getCartItem(i).getISBN() + "\";\">-</button></div></div>");
     }
     
