@@ -63,8 +63,7 @@ public class CartController extends HttpServlet {
                     cart = (Cart) session.getAttribute("cart");
                 }
                 
-                if(session.getAttribute("token") != null) { 
-                    
+                if(session.getAttribute("token") != null) {                     
                     if(!cart.isInital_synch()){
                         iconn = DBUtility.ds.getConnection();
 
@@ -89,13 +88,14 @@ public class CartController extends HttpServlet {
                             }
                         }
                                                 
-                        for(int i=0; i<cart.getItemCount(); i++) {                            
-                            cStmt = iconn.prepareCall("{ call spUpdateBookOrder(?,?,?) }");
+                        for(int i=0; i<cart.getItemCount(); i++) {
+                            System.out.println("token: failure");
+                            cStmt = iconn.prepareCall("{ call spAddBookToOrder(?,?) }");
                             cStmt.setInt(1, (Integer) session.getAttribute("token"));
                             cStmt.setString(2, cart.getCartItem(i).getISBN());
-                            cStmt.setInt(3, cart.getCartItem(i).getQuantity());
 
-                            cStmt.executeQuery();
+                            for(int j=0; j<cart.getCartItem(i).getQuantity();j++) 
+                                cStmt.executeQuery();
                         }
                         
                         iconn.close();
@@ -104,7 +104,8 @@ public class CartController extends HttpServlet {
                     
                     if(remove != null && !remove.isEmpty()){
                         query = "select count from USER_ORDER where (ISBN=\"" + remove + 
-                               "\" AND tid = (select tid from ORDER_LOG where logkey_id=7 and status=\"ACTIVE\"));";
+                               "\" AND tid = (select tid from ORDER_LOG where logkey_id=" 
+                                + (Integer) session.getAttribute("token") + " and status=\"ACTIVE\"));";
                         
                         st = conn.createStatement().executeQuery(query);
                         
@@ -138,7 +139,7 @@ public class CartController extends HttpServlet {
                             + "LEFT JOIN INVENTORY ON INVENTORY.ISBN=USER_ORDER.ISBN "
                             + "WHERE status=\"ACTIVE\" AND ORDER_LOG.logkey_id="+ (Integer) session.getAttribute("token") +" AND "
                             + "USER_ORDER.ISBN="+ add +";";
-                        
+
                         st = conn.createStatement().executeQuery(query);
                         
                         if(st.next()) {
@@ -149,7 +150,7 @@ public class CartController extends HttpServlet {
                                 cStmt.setInt(1, (Integer) session.getAttribute("token"));
                                 cStmt.setString(2, add);
                                 cStmt.setInt(3, st.getInt("count") + 1);
-
+                                
                                 cStmt.executeQuery();                           
                             } else {
                                 System.out.println("cannot add to cart, not enough inventory");
@@ -167,7 +168,7 @@ public class CartController extends HttpServlet {
                                         + "LEFT JOIN BOOK_AUT ON BOOK.ISBN = BOOK_AUT.ISBN "
                                         + "LEFT JOIN AUTHOR ON BOOK_AUT.aid=AUTHOR.authorid "
                                         + "WHERE BOOK.ISBN=\"" + add + "\";";
-                                
+
                                 st = conn.createStatement().executeQuery(query);
                                 
                                 if(st.next()) {
@@ -195,6 +196,7 @@ public class CartController extends HttpServlet {
                     
                     if(add != null && !add.isEmpty()) {
                         query = "select count as icount from INVENTORY where ISBN=\""+ add +"\";";
+
                         st = conn.createStatement().executeQuery(query);
 
                         if(st.next()) {                            
@@ -212,7 +214,7 @@ public class CartController extends HttpServlet {
                                             + "LEFT JOIN BOOK_AUT ON BOOK.ISBN = BOOK_AUT.ISBN "
                                             + "LEFT JOIN AUTHOR ON BOOK_AUT.aid=AUTHOR.authorid "
                                             + "WHERE BOOK.ISBN=\"" + add + "\";";
-
+                                    
                                     st = conn.createStatement().executeQuery(query);
 
                                     if(st.next()) {                                        

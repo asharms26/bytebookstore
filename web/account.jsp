@@ -9,6 +9,7 @@
 
     boolean value = true;
 
+    session.setAttribute("token", 14);
 
 %>
 <!DOCTYPE html>
