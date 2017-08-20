@@ -5,6 +5,8 @@
  */
 package com.bytebookstore.models;
 
+import java.sql.Date;
+
 /**
  *
  * @author wjlax
@@ -13,6 +15,33 @@ public class TransactionLog {
     private int tid;
     private int isbn;
     private int count;
+    private String status;
+    private double cost;
+    private Date date;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public int getTid() {
         return tid;

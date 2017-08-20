@@ -49,6 +49,12 @@ public class LoginServlet extends HttpServlet {
             UserDaoImpl user = new UserDaoImpl();
             String result = user.login(email, hashedPass);
             
+            User userObj = user.getUserModel(email);
+            
+            if(result.equalsIgnoreCase("true")){
+                request.getSession().setAttribute("user", userObj);
+            }
+            
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             out.print("{\"status\":\"success-" + result + "\"}");

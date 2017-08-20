@@ -10,6 +10,7 @@ import com.bytebookstore.models.User;
 import com.bytebookstore.utilities.DBUtility;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,27 @@ public class UserDaoImpl implements UserDao{
     public User getUserModel(Integer id) {
         User user = new User();
         try(Connection conn = DBUtility.ds.getConnection()){
+            
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return user;
+    }
+    
+    public User getUserModel(String email){
+        User user = new User();
+        try(Connection conn = DBUtility.ds.getConnection()){
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM USER WHERE email = ?");
+            statement.setString(1, email);
+            ResultSet rs = statement.executeQuery();
+            
+            while(rs.next()){
+                user.setEmail(rs.getString("email"));
+                user.setFirstName(rs.getString("fname"));
+                user.setLastName(rs.getString("lname"));
+                user.setPrivilege(rs.getBoolean("privilege"));
+                break;
+            }
             
         } catch(Exception ex){
             System.out.println(ex.getMessage());
@@ -97,13 +119,14 @@ public class UserDaoImpl implements UserDao{
             cStmt.setString(2, password);
             cStmt.registerOutParameter(3, java.sql.Types.VARCHAR);
             boolean valid = cStmt.execute();
-            ResultSet set = cStmt.getResultSet();
-            status = set.getString("pResult");
+            status = cStmt.getString(3);
+         
         } catch(Exception ex){
             System.out.println(ex.getMessage());
             status = "FALSE";
         }
         return status;
     }
+    
     
 }

@@ -11,6 +11,9 @@ import com.bytebookstore.utilities.DBUtility;
 import java.sql.Connection;
 import java.util.List;
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.sql.ResultSet;
+
 
 /**
  *
@@ -42,7 +45,21 @@ public class BookDaoImpl implements BookDao{
 
     @Override
     public List<Book> getAllBookModels(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Book> books = new ArrayList<>();
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM BOOK");
+            while(rs.next()){
+                Book book = new Book();
+                book.setISBN(rs.getString("isbn"));
+                book.setTitle(rs.getString("title"));
+                books.add(book);
+            }
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return books;
     }
 
     @Override

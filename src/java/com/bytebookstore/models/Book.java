@@ -10,16 +10,16 @@ package com.bytebookstore.models;
  * @author wjlax
  */
 public class Book {
-    private int ISBN;
+    private String ISBN;
     private String title;
     private String image;
     private double price;
 
-    public int getISBN() {
+    public String getISBN() {
         return ISBN;
     }
 
-    public void setISBN(int ISBN) {
+    public void setISBN(String ISBN) {
         this.ISBN = ISBN;
     }
 

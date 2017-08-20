@@ -4,11 +4,13 @@
     Author     : wjlax
 --%>
 
+<%@page import="com.bytebookstore.models.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<% 
-
-    boolean value = true;
-
+<%
+    User user = null;
+    if (request.getSession().getAttribute("user") != null) {
+        user = (User) request.getSession().getAttribute("user");
+    }
 
 %>
 <!DOCTYPE html>
@@ -23,7 +25,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="script/utility.js"></script>
-        
+
         <style>
             /* Remove the navbar's default rounded borders and increase the bottom margin */ 
             .navbar {
@@ -54,12 +56,20 @@
                 padding-top:75px;
                 padding-bottom:100px;
             }
-            
+
             #registration-form, #login-form{
                 background:steelblue;
                 padding:10px;
                 color:white;
             }
+
+            .wrapper{
+                background:rgba(0,0,0,0.1);
+                border:1px solid lightgrey;
+                padding:5px 10px;
+
+            }
+
         </style>
     </head>
     <body>
@@ -94,14 +104,14 @@
             </div>
         </nav>
 
-        
+        <% if (user == null) { %>
         <div class="container" id="account-creation-container">
             <div class="col-md-6">
                 <form id="login-form">
                     <h2>Login</h2><br/>
                     <div class="form-group">
                         <label><strong>Email</strong></label>
-                        <input class="form-control" type="email" placeholder="Enter Email" name="login-email" required>
+                        <input class="form-control" type="email" placeholder="Enter Email" name="email" required>
                     </div>
                     <div class="form-group">
                         <label><strong>Password</strong></label>
@@ -134,7 +144,7 @@
                         <label><strong>Re-Enter Password</strong></label>
                         <input class="form-control" type="password" placeholder="Re-Enter Password" name="second-pass" required />
                     </div>
-                    
+
                     <div class="form-group">
                         <label><input type="radio" name="privilege" value="false" class="radio radio-inline" style="vertical-align:top;margin-right:10px;"/>Buyer</label><br/>
                         <label><input type="radio" name="privilege" value="true" class="radio radio-inline" style="vertical-align:top;margin-right:10px;"/>Merchant</label>
@@ -147,12 +157,97 @@
                     </div>   
                 </form>
             </div>
+        </div>    
+
+        <% } else {%>
+        <div class="container" style="padding-top:50px; padding-bottom:50px;">
+            <h1 style="text-align:center; width:auto; margin:0 auto; padding:15px 10px;margin-bottom:30px; background:steelblue;color:white; border-bottom:10px solid silver;">User Dashboard</h1>
+
+            <div class="row" style="margin-bottom:50px;">
+                <div class="col-md-4">
+                    <h1><%= user.getFirstName() + " " + user.getLastName()%></h1>
+                    <h3><%= user.getPrivilege() ? "Merchant" : "Buyer"%></h3>
+                    <h3><%= user.getEmail()%></h3>
+                </div>
+                <div class="col-md-4">
+                    <div class="wrapper">
+                        <h1>Edit Information</h1>
+                        <form id="update-info-form">
+                            <div class="form-group">
+                                <label for="first-name">First Name</label>
+                                <input type="text" class="form-control" name="first-name"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="first-name">Last Name</label>
+                                <input type="text" class="form-control" name="last-name"/>
+                            </div> 
+                            <div class="form-group">
+                                <label for="first-name">Email:</label>
+                                <input type="text" class="form-control" name="email"/>
+                            </div>
+                            <input type="submit" class="btn btn-default"/>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="wrapper">
+                        <h1>Update Password</h1>
+                        <form id="update-password-form">
+                            <div class="form-group">
+                                <label for="old-password">Enter Old Password</label>
+                                <input type="password" class="form-control" name="old-password"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-pass-one">Enter New Password</label>
+                                <input type="password" class="form-control" name="new-pass-one"/>
+                            </div> 
+                            <div class="form-group">
+                                <label for="new-pass-two">Re-Enter New Password</label>
+                                <input type="password" class="form-control" name="new-pass-two"/>
+                            </div>
+                            <input type="submit" class="btn btn-default"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <% if (user.getPrivilege()) { %>
+                <div class="col-md-4">
+                    <div class="wrapper">
+                        <h1>Add a Book!</h1>
+                        <form id="add-book-form">
+                            <div class="form-group">
+                                <label for="book-title">Book Title</label>
+                                <input type="text" class="form-control" name="book-title" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="book-author">Book Author</label>
+                                <input type="text" class="form-control" name="book-author" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="book-image">Book Image</label>
+                                <input type="file" class="form-control" name="book-image" required/>
+                            </div>
+                            <input class="btn btn-default" type="submit"/>
+                        </form>
+                    </div>
+                </div>
+                <% } %>
+                <div class="col-md-4">
+                    <div class="wrapper">
+                        <h1>Past Orders</h1>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <% }%>
+
 
         <div id="modal" title="Registration Status">
             <p id="modal-content"></p>
         </div>
-        
+
 
         <script>
 
@@ -189,16 +284,6 @@
                 });
             }
 
-            var doPost = function (r, d, s, f) {
-                $.ajax({
-                    type: "POST",
-                    dataType: "json",
-                    url: r,
-                    data: d,
-                    success: s,
-                    error: f
-                });
-            };
             function checkPasswords() {
                 var firstPass = $("#registration-form input[name='first-pass']");
                 var secondPass = $("#registration-form input[name='second-pass']");
@@ -230,22 +315,23 @@
                     alert("Passwords don't match!");
                 }
             });
-            
+
             $("#login-form").submit(function (e) {
                 e.preventDefault();
                 if (checkPasswords()) {
                     var route = "LoginServlet";
                     var dat = $(this).serializeArray();
                     var success = function (response) {
-                        if (response.status == "success") {
+                        var type = response.status.split("-")[1];
+                        if (type.toLowerCase() == "true") {
                             $("#modal-content").html("Success you have logged in!");
                             showDialog(dialogCloseSuccess);
                         } else {
-                            var type = response.status.split("-")[1];
+                            console.log(response.status);
                             var msg = "";
-                            if(type == "PW"){
+                            if (type == "PW") {
                                 msg = "Password not correct!";
-                            } else if(type == "USER"){
+                            } else if (type == "USER") {
                                 msg = "User does not exist!";
                             } else {
                                 msg = "There was an error in login. Please contact us!";
@@ -263,6 +349,41 @@
                     doPost(route, dat, success, error);
                 } else {
                     alert("Passwords don't match!");
+                }
+            });
+
+            $("#add-book-form").submit(function (e) {
+                e.preventDefault();
+                var data = $(this).serializeArray();
+                var confirm = window.confirm("Confirm new book submission!");
+                if (confirm) {
+
+                } else {
+
+                }
+            });
+
+            $("#update-info-form").submit(function (e) {
+                e.preventDefault();
+                var data = $(this).serializeArray();
+                var confirm = window.confirm("Confirm information update!");
+                if (confirm) {
+
+                } else {
+
+                }
+            });
+
+            $("#update-password-form").submit(function (e) {
+                e.preventDefault();
+                var data = $(this).serializeArray();
+                var confirm = window.confirm("Confirm password update!");
+                if (confirm) {
+                    if (data[1].value != data[2].value) {
+                        alert("New password's don't match");
+                    }
+                } else {
+
                 }
             });
         </script>
