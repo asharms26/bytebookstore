@@ -82,6 +82,7 @@ public class CartCheckout extends HttpServlet {
                         conn.createStatement().executeUpdate(query);
 
                         System.out.println("purchased: " + cart.getCartItem(i).getQuantity() + " of " + cart.getCartItem(i).getISBN());
+
                         cart.getCartItem(i).setPurchased(true);
                     } else {
                         System.out.println("failed to purchase: " + cart.getCartItem(i).getISBN() + "inventory: " + st.getInt("icount"));
@@ -101,15 +102,11 @@ public class CartCheckout extends HttpServlet {
             cStmt.setInt(1, token);
             cStmt.executeQuery();
             
-            
-            System.out.println("what?");
-            
             String subject = "Order Receipt - ByteBookstore";
             
             String body = "This is the confirmation e-mail for your recently submitted order from " +
                     "The ByteBookstre.\n\n";
-            
-            
+
             for(int i=0; i<cart.getItemCount(); i++) {
                 if(cart.getCartItem(i).isPurchased())
                     body = body + "\n  +  Succesful purchase: " + cart.getCartItem(i).getQuantity() + " copies of: " + cart.getCartItem(i).getTitle() + " at $" + cart.getCartItem(i).getPrice();
@@ -121,7 +118,7 @@ public class CartCheckout extends HttpServlet {
             
             body = body + "\n\n Customer Name: " + request.getParameter("buyerName");
             body = body + "\n\n Customer Address " + request.getParameter("buyerStreet");
-            body = body + "\n                    " + request.getParameter("buyerCity") + ", " + request.getParameter("buyerState");
+            body = body + "\n                  " + request.getParameter("buyerCity") + ", " + request.getParameter("buyerState");
             body = body + "  " + request.getParameter("buyerZIP");
            
             final String username = "EN605.782";
