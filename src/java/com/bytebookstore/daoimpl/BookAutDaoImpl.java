@@ -41,7 +41,7 @@ public class BookAutDaoImpl implements BookAutDao{
     
     public boolean create(Author author, Book book) {
         boolean valid = true;
-        try(Connection conn = DBUtility.ds.getConnection()){
+        try(Connection conn = DBUtility.ds.getConnection()){ // << ALL WE HAVE TO DO TO CREATE A POOLED CONNECTION!
             CallableStatement cStmt = conn.prepareCall("{call spBookAuthorInsert(?,?,?)}");
             cStmt.setString(1, author.getFirstName());
             cStmt.setString(2, author.getLastName());

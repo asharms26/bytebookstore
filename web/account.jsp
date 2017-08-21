@@ -250,12 +250,14 @@
                 <div class="col-md-4">
                     <div class="wrapper">
                         <h1>Book Uploads</h1>
+                        <p style="color:red;">No past uploads yet!</p>
                     </div>
                 </div>
                 <% } %>
                 <div class="col-md-4">
                     <div class="wrapper">
                         <h1>Past Orders</h1>
+                        <p style="color:red;">No past orders yet!</p>
                     </div>
                 </div>
 
