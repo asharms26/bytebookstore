@@ -67,6 +67,7 @@ public class UserDaoImpl implements UserDao{
                 user.setFirstName(rs.getString("fname"));
                 user.setLastName(rs.getString("lname"));
                 user.setPrivilege(rs.getBoolean("privilege"));
+                user.setLogkey_id(rs.getInt("logkey_id"));
                 break;
             }
             
@@ -103,7 +104,13 @@ public class UserDaoImpl implements UserDao{
     public boolean update(User model) {
         boolean valid = true;
         try(Connection conn = DBUtility.ds.getConnection()){
-            
+            CallableStatement cStmt = conn.prepareCall("{call spUserUpdate(?,?,?,?,?)}");
+            cStmt.setInt(1, model.getLogkey_id());
+            cStmt.setString(2, model.getFirstName());
+            cStmt.setString(3, model.getLastName());
+            cStmt.setString(4, model.getEmail());
+            cStmt.setBoolean(5, model.getPrivilege());
+            cStmt.execute();
         } catch(Exception ex){
             System.out.println(ex.getMessage());
             valid = false;

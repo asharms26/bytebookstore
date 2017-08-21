@@ -17,11 +17,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+
 /**
  *
  * @author wjlax
@@ -39,34 +41,45 @@ public class LoginServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (Connection conn = DBUtility.ds.getConnection()) {
-            
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            String hashedPass = Utility.hashPassword(password);
-            
-            UserDaoImpl user = new UserDaoImpl();
-            String result = user.login(email, hashedPass);
-            
-            User userObj = user.getUserModel(email);
-            
-            if(result.equalsIgnoreCase("true")){
-                request.getSession().setAttribute("user", userObj);
-            }
-            
-            response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
-            out.print("{\"status\":\"success-" + result + "\"}");
-            out.flush();
-            
-        } catch (Exception ex) {
-            response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
-            out.print("{\"status\":\"failure\"}");
-            out.flush();
-        }
         
+        response.setContentType("text/html;charset=UTF-8");
+
+        if (request.getParameter("tag") != null && request.getParameter("tag").equalsIgnoreCase("logout")) {
+            request.getSession().invalidate();
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/");
+            dispatcher.forward(request, response);
+        } else {
+            try (Connection conn = DBUtility.ds.getConnection()) {
+
+                String email = request.getParameter("email");
+                String password = request.getParameter("password");
+                String hashedPass = Utility.hashPassword(password);
+
+                UserDaoImpl user = new UserDaoImpl();
+                String result = user.login(email, hashedPass);
+
+                User userObj = user.getUserModel(email);
+                
+                RegDataDaoImpl regDao = new RegDataDaoImpl();
+                RegData regData = regDao.getRegDataModel(email);
+
+                
+                if (result.equalsIgnoreCase("true")) {
+                    request.getSession().setAttribute("user", userObj);
+                }
+
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                out.print("{\"status\":\"success-" + result + "\"}");
+                out.flush();
+
+            } catch (Exception ex) {
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                out.print("{\"status\":\"failure\"}");
+                out.flush();
+            }
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

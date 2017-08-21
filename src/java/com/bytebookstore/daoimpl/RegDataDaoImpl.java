@@ -88,4 +88,8 @@ public class RegDataDaoImpl implements RegDataDao {
         return valid;
     }
 
+    public RegData getRegDataModel(String email) {
+        return null;
+    }
+
 }

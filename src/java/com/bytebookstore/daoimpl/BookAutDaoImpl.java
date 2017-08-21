@@ -7,7 +7,12 @@ package com.bytebookstore.daoimpl;
 
 import com.bytebookstore.dao.BookAutDao;
 import com.bytebookstore.models.Author;
+import com.bytebookstore.models.Book;
 import com.bytebookstore.utilities.DBUtility;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.List;
 import javax.sql.DataSource;
@@ -30,6 +35,21 @@ public class BookAutDaoImpl implements BookAutDao{
         boolean valid = true;
         try(Connection conn = DBUtility.ds.getConnection()){
             
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+            valid = false;
+        }
+        return valid; 
+    }
+    
+    public boolean create(Author author, Book book) {
+        boolean valid = true;
+        try(Connection conn = DBUtility.ds.getConnection()){
+            CallableStatement cStmt = conn.prepareCall("{call spBookAuthorInsert(?,?,?)}");
+            cStmt.setString(1, author.getFirstName());
+            cStmt.setString(2, author.getLastName());
+            cStmt.setString(3, book.getISBN());
+            valid = cStmt.execute();
         } catch(Exception ex){
             System.out.println(ex.getMessage());
             valid = false;

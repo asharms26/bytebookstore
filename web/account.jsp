@@ -11,7 +11,6 @@
     if (request.getSession().getAttribute("user") != null) {
         user = (User) request.getSession().getAttribute("user");
     }
-
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,6 +42,7 @@
                 background-color: #f2f2f2;
                 padding: 25px;
             }
+
             /* nav bar search box - drop down menu button */
             .navbar .navbar-search .dropdown-menu { min-width: 25px; }
             .dropdown-menu .label-icon { margin-left: 5px; }
@@ -91,14 +91,15 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="index.html">Home</a></li>
+                        <li><a href="index.html">Home</a></li>
                         <li><a href="search.html">Search Products</a></li>
                         <li><a href="stores.html">Stores</a></li>
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
+                        <li class="active"><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
                         <li><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+                        <li><a href="LoginServlet?tag=logout"><span class="glyphicon glyphicon-return"></span>Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -183,7 +184,7 @@
                             </div> 
                             <div class="form-group">
                                 <label for="first-name">Email:</label>
-                                <input type="text" class="form-control" name="email"/>
+                                <input type="email" class="form-control" name="email"/>
                             </div>
                             <input type="submit" class="btn btn-default"/>
                         </form>
@@ -221,8 +222,20 @@
                                 <input type="text" class="form-control" name="book-title" required/>
                             </div>
                             <div class="form-group">
-                                <label for="book-author">Book Author</label>
-                                <input type="text" class="form-control" name="book-author" required/>
+                                <label for="book-author-first-name">Book Author First Name</label>
+                                <input type="text" class="form-control" name="book-author-first-name" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="book-author-last-name">Book Author Last Name</label>
+                                <input type="text" class="form-control" name="book-author-last-name" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="book-price">Price</label>
+                                <input type="text" class="form-control" name="book-price" pattern="^(\d*\.\d{1,2}|\d+)$" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="book-inventory">Inventory</label>
+                                <input type="text" class="form-control" name="book-inventory" pattern="^(0|[1-9][0-9]*)$" required/>
                             </div>
                             <div class="form-group">
                                 <label for="book-image">Book Image</label>
@@ -232,19 +245,25 @@
                         </form>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="wrapper">
+                        <h1>Book Uploads</h1>
+                    </div>
+                </div>
                 <% } %>
                 <div class="col-md-4">
                     <div class="wrapper">
                         <h1>Past Orders</h1>
                     </div>
                 </div>
+                
             </div>
         </div>
 
         <% }%>
 
 
-        <div id="modal" title="Registration Status">
+        <div id="modal" title="Process Result">
             <p id="modal-content"></p>
         </div>
 
@@ -357,6 +376,26 @@
                 var data = $(this).serializeArray();
                 var confirm = window.confirm("Confirm new book submission!");
                 if (confirm) {
+                    var file = document.querySelector('input[type=file]').files[0];
+                    var reader = new FileReader();
+                    reader.addEventListener("load", function () {
+                        var route = "AccountServlet";
+                        data.push({"name": "tag", "value": "ADD_BOOK"});
+                        data.push({"name": "img", "value": reader.result});
+                        var success = function (response) {
+                            hideLoadingGif();
+                            $("#modal-content").html("Book has been added!");
+                        }
+                        var error = function (response) {
+                            hideLoadingGif();
+                        }
+                        showLoadingGif();
+                        doPost(route, data, success, error);
+                    }, false);
+
+                    if (file) {
+                        reader.readAsDataURL(file);
+                    }
 
                 } else {
 
@@ -368,7 +407,18 @@
                 var data = $(this).serializeArray();
                 var confirm = window.confirm("Confirm information update!");
                 if (confirm) {
-
+                    var route = "AccountServlet";
+                    data.push({"name": "tag", "value": "UPDATE_INFO"});
+                    var success = function (response) {
+                        hideLoadingGif();
+                        $("#modal-content").html("Information updated!");
+                        showDialog(dialogCloseSuccess);
+                    }
+                    var error = function (response) {
+                        hideLoadingGif();
+                    }
+                    showLoadingGif();
+                    doPost(route, data, success, error);
                 } else {
 
                 }
@@ -381,6 +431,23 @@
                 if (confirm) {
                     if (data[1].value != data[2].value) {
                         alert("New password's don't match");
+                    } else {
+                        var route = "AccountServlet";
+                        data.push({"name": "tag", "value": "UPDATE_PASSWORD"});
+                        var success = function (response) {
+                            if (response.status == "NOEXIST") {
+                                alert("Existing password not correct!");
+                            } else {
+                                hideLoadingGif();
+                                $("#modal-content").html("Password updated!");
+                                showDialog(dialogCloseSuccess);
+                            }
+                        }
+                        var error = function (response) {
+                            hideLoadingGif();
+                        }
+                        showLoadingGif();
+                        doPost(route, data, success, error);
                     }
                 } else {
 
