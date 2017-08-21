@@ -4,7 +4,12 @@
     Author     : mbenso14
 --%>
 
+<%@page import="com.bytebookstore.models.User"%>
 <%@page import="com.bytebookstore.models.CartItem"%>
+<%@ page import="com.bytebookstore.models.Cart" %>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,6 +41,7 @@
 
   <%@ page import="com.bytebookstore.models.Cart" %>
   <% Cart cart = (Cart)session.getAttribute("cart"); %>
+  <% User user = (User) session.getAttribute("user"); %>
 </head>
 <body>
 
@@ -63,7 +69,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
-        <li class="active"><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+        <li class="active"><a href="/ByteBookstore/Cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
             <% if (request.getSession().getAttribute("user") != null) { %>
         <li><a href="LoginServlet?tag=logout"><span class="glyphicon glyphicon-return"></span>Logout</a></li>
         <% } %>
@@ -102,13 +108,13 @@
         } else {
             out.println("<div class=\"back2\">");
         }
-        out.println("<div class=\"cell_1\">" + cart.getCartItem(i).getTitle() + " - " + cart.getCartItem(i).getFirstName() + " " + cart.getCartItem(i).getLastName() + "</div>");
+        out.println("<div class=\"cell_1\">" + cart.getCartItem(i).getTitle() + "</div>");
         out.println("<div class=\"cell_2\">" + cart.getCartItem(i).getISBN() + "</div>");
         out.println("<div class=\"cell_3\">" + cart.getCartItem(i).getQuantity() + "</div>");
         out.println("<div class=\"cell_4\">$"+ String.format("%.2f",cart.getCartItem(i).getPrice()) +"</div>");
         out.println("<div class=\"cell_5\">$"+ String.format("%.2f",cart.getCartItem(i).getPrice() * cart.getCartItem(i).getQuantity()) +"</div>");
-        out.println("<div class=\"cell_6_1\"><button type=\"submit\" name=\"action\" Value=\"" + cart.getCartItem(i).getISBN() + "\";\">+</button></div>");
-        out.println("<div class=\"cell_7\"><button type=\"submit\" name=\"remove\" Value=\"" + cart.getCartItem(i).getISBN() + "\";\">-</button></div></div>");
+        out.println("<div class=\"cell_6_1\"><button type=\"submit\" name=\"add\" Value=\"" + cart.getCartItem(i).getISBN() + "\">+</button></div>");
+        out.println("<div class=\"cell_7\"><button type=\"submit\" name=\"remove\" Value=\"" + cart.getCartItem(i).getISBN() + "\">-</button></div></div>");
     }
     
     out.println("<div class=\"main\">");

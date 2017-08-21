@@ -98,7 +98,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
-                        <li><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+                        <li><a href="/ByteBookstore/Cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
                             <% if (request.getSession().getAttribute("user") != null) { %>
                         <li><a href="LoginServlet?tag=logout"><span class="glyphicon glyphicon-return"></span>Logout</a></li>
                             <% } %>

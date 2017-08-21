@@ -35,8 +35,13 @@
     }
   </style>
   
+  <%@ page import="com.bytebookstore.models.User" %>
   <%@ page import="com.bytebookstore.models.Cart" %>
+
   <% Cart cart = (Cart)session.getAttribute("cart"); %>
+  <% User user = (User) session.getAttribute("user"); %>
+  
+  <% if(user==null) { response.sendRedirect("account.jsp"); }%>
 
 </head>
 <body>
@@ -65,7 +70,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
-        <li><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+        <li><a href="/ByteBookstore/Cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
             <% if (request.getSession().getAttribute("user") != null) { %>
         <li><a href="LoginServlet?tag=logout"><span class="glyphicon glyphicon-return"></span>Logout</a></li>
         <% } %>
@@ -78,12 +83,6 @@
         <%
         
     out.println("<form class=\"navbar-form navbar-search\" role=\"Cart\" action=\"Cart\" method=\"post\">");
-
-    if (session.getAttribute("cart") == null) {
-        cart = new Cart();
-    } else {
-        cart = (Cart) session.getAttribute("cart");
-    }
     
     if(cart.getItemCount()>0){
         out.println("<div class=\"main\"><div class=\"cell_1\">Title - Author</div>");
@@ -115,7 +114,7 @@
 
 <br><hr><br>
 
-<form name="cc_validate" action="" onsubmit="return validateForm()" method="post">
+<form name="cc_validate" action="CartCheckout" onsubmit="return validateForm()" method="post">
 
 <fieldset>
     <legend>Payment Details</legend>
@@ -126,7 +125,58 @@
 		<div class="main">Street: <input type="text" name="buyerStreet"></div>
 		<div class="main">
 			<div class="c_cell_1">City: <input type="text" name="buyerCity"></div>
-			<div class="c_cell_2">State: <input type="text" name="buyerState"></div>
+			<div class="c_cell_2">State: <select name="buyerState">
+                            <option value="Alabama">Alabama</option> 
+                            <option value="Alaska">Alaska</option>
+                            <option value="Arizona">Arizona</option> 
+                            <option value="Arkansas">Arkansas</option> 
+                            <option value="California">California</option> 
+                            <option value="Colorado">Colorado</option> 
+                            <option value="Connecticut">Connecticut</option> 
+                            <option value="Delaware">Delaware</option> 
+                            <option value="Florida">Florida</option> 
+                            <option value="Georgia">Georgia</option> 
+                            <option value="Hawaii">Hawaii</option> 
+                            <option value="Idaho">Idaho</option> 
+                            <option value="Illinois">Illinois</option>
+                            <option vaule="Indiana">Indiana</option> 
+                            <option value="Iowa">Iowa</option> 
+                            <option value="Kansas">Kansas</option> 
+                            <option value="Kentucky">Kentucky</option> 
+                            <option value="Louisiana">Louisiana</option> 
+                            <option value="Maine">Maine</option> 
+                            <option value="Maryland">Maryland</option> 
+                            <option value="Massachusetts">Massachusetts</option> 
+                            <option value="Michigan">Michigan</option> 
+                            <option value="Minnesota">Minnesota</option> 
+                            <option value="Mississippi">Mississippi</option> 
+                            <option value="Missouri">Missouri</option> 
+                            <option value="Montana">Montana</option>
+                            <option value="Nebraska">Nebraska</option> 
+                            <option value="Nevada">Nevada</option> 
+                            <option value="New Hampshire">New Hampshire</option> 
+                            <option value="New Jersey">New Jersey</option> 
+                            <option value="New Mexico">New Mexico</option> 
+                            <option value="New York">New York</option> 
+                            <option value="North Carolina">North Carolina</option> 
+                            <option value="North Dakota">North Dakota</option> 
+                            <option value="Ohio">Ohio</option> 
+                            <option value="Oklahoma">Oklahoma</option> 
+                            <option value="Oregon">Oregon</option> 
+                            <option value="Pennsylvania">Pennsylvania</option> 
+                            <Option value="Rhode Island">Rhode Island</option> 
+                            <option value="South Carolina">South Carolina</option> 
+                            <option value="South Dakota">South Dakota</option> 
+                            <option value="Tennessee">Tennessee</option> 
+                            <option value="Texas">Texas</option> 
+                            <option value="Utah">Utah</option> 
+                            <option value="Vermont">Vermont</option> 
+                            <option value="Virginia">Virginia</option> 
+                            <option value="Washington">Washington</option> 
+                            <option value="West Virginia">West Virginia</option> 
+                            <option value="Wisconsin">Wisconsin</option> 
+                            <option value="Wyoming">Wyoming</option>
+                        </select></div>
 		</div>
 		<div class="main">ZIPCODE: <input type="text" name="buyerZIP"></div>
 	</div>

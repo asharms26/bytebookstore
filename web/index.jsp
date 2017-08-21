@@ -70,7 +70,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
-                        <li><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+                        <li><a href="/ByteBookstore/Cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
                             <% if (request.getSession().getAttribute("user") != null) { %>
                         <li><a href="LoginServlet?tag=logout"><span class="glyphicon glyphicon-return"></span>Logout</a></li>
                             <% } %>
@@ -94,7 +94,7 @@
                     <img src="data:image/jpg;base64,<%= book.getImage()%>" class="img img-responsive img-thumbnail" style="height:250px;"/>
                     <div class="caption" style="text-align:center;">
                         <p><%= book.getAuthor().getFirstName() + " " + book.getAuthor().getLastName() %></p>
-                        <p><a href="#" class="btn btn-primary" role="button">Add To Cart</a></p>
+                        <p><a href="Cart?add=<%= book.getISBN()%>" class="btn btn-primary" role="button">Add To Cart</a></p>
                     </div>
                 </div>
                     </div>

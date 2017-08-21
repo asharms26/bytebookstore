@@ -21,6 +21,10 @@
         <servlet-name>AccountServlet</servlet-name>
         <servlet-class>com.bytebookstore.servlets.AccountServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CartCheckout</servlet-name>
+        <servlet-class>com.bytebookstore.servlets.CartCheckout</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -28,6 +32,10 @@
     <servlet-mapping>
         <servlet-name>StartupServlet</servlet-name>
         <url-pattern>/StartupServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CartCheckout</servlet-name>
+        <url-pattern>/CartCheckout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>search</servlet-name>

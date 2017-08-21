@@ -7,10 +7,14 @@ package com.bytebookstore.servlets;
 
 import com.bytebookstore.utilities.DBUtility;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.sql.Blob;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -41,49 +45,31 @@ public class SearchServlet extends HttpServlet {
             String queryString = request.getParameter("queryString");
             String querySel = request.getParameter("querySel");
             String query = "";
+            
+            ResultSet st = null;
+            ResultSet stAuthor = null;
+            Blob blob;
+            byte[] bytes;
+            String imgString;
 
-            String action = request.getParameter("action");
-
+            System.out.println(request.getAttribute("isbn"));
+            
             try {
                 Connection conn = DBUtility.ds.getConnection();
                 
-                if (!queryString.equals(""))
-                    queryString = queryString.replaceAll("[^a-zA-Z0-9 ]", "");
-                
-                if (querySel.equals("Search by Title")) {                    
+                if (querySel.equals("Search by Title/ISBN")) {                    
                     if (!queryString.equals("")) {
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where title LIKE \"%" + queryString + "%\";";
-                    } else {
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
+                        CallableStatement cStmt = conn.prepareCall("{call spTitleSearch(?)}");
+                        cStmt.setString(1, queryString);
+                        st = cStmt.executeQuery();
                     }
                 }else if (querySel.equals("Search by Author")) {
-
                     if (!queryString.equals("")) {
-                        String words[] = queryString.split("\\s+");
-                        String wordlist;
-                        
-                        wordlist = "(\'" + words[0];
-
-                        for(int i=1; i<words.length; i++) { 
-                            wordlist = wordlist + "\',\'" + words[i];
-                        }
-                        
-                        wordlist = wordlist + "\')";
-                                                
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where (AUTHOR.lastname IN " + wordlist + " OR AUTHOR.firstname IN " + wordlist + ");";
-                    } else {
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
-                    }
-                }else if (querySel.equals("Search by ISBN")){
-
-                    if (!queryString.equals("")) {
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid where BOOK.ISBN LIKE \"%" + queryString + "%\";";
-                    } else {
-                        query = "SELECT BOOK.*, INVENTORY.price, INVENTORY.count, AUTHOR.lastname, AUTHOR.firstname FROM BOOK LEFT JOIN INVENTORY ON BOOK.ISBN=INVENTORY.ISBN LEFT JOIN BOOK_AUT ON BOOK.ISBN=BOOK_AUT.ISBN INNER JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid;";
+                        CallableStatement cStmt = conn.prepareCall("{call spAuthorNameSearch(?)}");
+                        cStmt.setString(1, queryString);
+                        st = cStmt.executeQuery();
                     }
                 }
-                
-                ResultSet st = conn.createStatement().executeQuery(query);
                 
                 out.println("<!DOCTYPE html>");
                 out.println("<html lang=\"en\">");
@@ -133,14 +119,14 @@ public class SearchServlet extends HttpServlet {
                 out.println("</div>");
                 out.println("<div class=\"collapse navbar-collapse\" id=\"myNavbar\">");
                 out.println("<ul class=\"nav navbar-nav\">");
-                out.println("<li class=\"active\"><a href=\"index.html\">Home</a></li>");
+                out.println("<li class=\"active\"><a href=\"index.jsp\">Home</a></li>");
                 out.println("<li><a href=\"search.html\">Search Products</a></li>");
                 out.println("<li><a href=\"stores.html\">Stores</a></li>");
                 out.println("<li><a href=\"contact.html\">Contact</a></li>");
                 out.println("</ul>");
                 out.println("<ul class=\"nav navbar-nav navbar-right\">");
                 out.println("<li><a href=\"account.jsp\"><span class=\"glyphicon glyphicon-user\"></span> Your Account</a></li>");
-                out.println("<li><a href=\"cart.jsp\"><span class=\"glyphicon glyphicon-shopping-cart\"></span> Cart</a></li>");
+                out.println("<li><a href=\\ByteBookstore\\Cart><span class=\"glyphicon glyphicon-shopping-cart\"></span> Cart</a></li>");
                 out.println("</ul>");
                 out.println("</div>");
                 out.println("</div>");
@@ -155,71 +141,98 @@ public class SearchServlet extends HttpServlet {
                 out.println("<div class=\"form-group\">");
                 out.println("<label for=\"sel1\">Select list:</label>");
                 out.println("<select class=\"form-control\" name=\"querySel\" id=\"sel1\">");
-                out.println("<option>Search by Title</option>");
+                out.println("<option>Search by Title/ISBN</option>");
                 out.println("<option>Search by Author</option>");
-                out.println("<option>Search by ISBN</option>");
                 out.println("</select>");
                 out.println("</div>");
                 out.println("</div>");
                 out.println("<input type=\"text\" name=\"queryString\" class=\"form-control\">");
                 out.println("<div class=\"input-group-btn\">");
                 out.println("<input type=\"submit\" name=\"action\" value=\"Go\" class=\"btn btn-search btn-default\">");
-                out.println("</form>");
-                out.println("</div>");
-                out.println("</div>");
-                
+
+                out.println("</div></div></form></div></nav>");
+
                 if(st.next()) {
                     out.println("<form class=\"navbar-form navbar-search\" role=\"Cart\" action=\"Cart\" method=\"post\">");
                     out.println("<h1>Search Results</h1><br><br>");
-                    
-                    out.println("<div class=\"main\">");
-                    out.println("<div class=\"cell_1\">image</div>");
-                    out.println("<div class=\"cell_2\">Title - Author</div>");
-                    out.println("<div class=\"cell_3\">ISBN</div>");
-                    out.println("<div class=\"cell_4\">Cost</div>");
-                    out.println("<div class=\"cell_5\">Inventory</div>");
-                    out.println("</div>");
 
+                    query = "SELECT * FROM AUTHOR LEFT JOIN BOOK_AUT ON AUTHOR.authorid=BOOK_AUT.aid where BOOK_AUT.ISBN=" + st.getString("ISBN") + ";";
                     
-                    out.println("<div class=\"back1\">");
-                    out.println("<div class=\"cell_1\">" + st.getString("image") + "</div>");
-                    out.println("<div class=\"cell_2\">" + st.getString("title") + " - " + st.getString("firstname") + " " + st.getString("lastname") + "</div>");
-                    out.println("<div class=\"cell_3\">" + st.getString("ISBN") + "</div>");
-                    out.println("<div class=\"cell_4\">Cost</div>");
-                    out.println("<div class=\"cell_5\">"+ st.getString("count") + "</div>");
-                    out.println("<div class=\"cell_6\"><button type=\"submit\" name=\"action\" Value=\"" + st.getString("ISBN") + "\";\">Add To Cart</button></div>");
+                    stAuthor = conn.createStatement().executeQuery(query);
+                    
+                    String authorBuilder = "";
+                    if(stAuthor.next()) {
+                        authorBuilder = stAuthor.getString("firstname") + " " + stAuthor.getString("lastname");
+                    }
+                    
+                    while(stAuthor.next()) {
+                        authorBuilder = authorBuilder + ", " + stAuthor.getString("firstname") + " " + stAuthor.getString("lastname");
+                    }
+                    
+                    blob = st.getBlob("image");
+                    bytes = blob.getBytes(1, (int)blob.length());
+                    imgString = Base64.getEncoder().encodeToString(bytes);
+                    
+                    out.println("<div class=\"outer_float\">");
+                    out.println("<div class=\"inner_float\">");
+                    out.println("<div class=\"pair_float\">");
+
+                    out.println("<div class=\"book_float\">");
+                    
+                    out.println("<img class=\"img_style\" src=\"data:image/jpg;base64," + imgString + "\" style=\"max-height:225px;\">");
                     out.println("</div>");
                     
-                    int k=0;
+                    out.println("<div class=\"book_float\">");
+                    out.println("<div class=\"image_text\">Book Details</div>");
+                    out.println("<div class=\"text_details\">Title: " + st.getString("title") + "</div>");
+                    out.println("<div class=\"text_details\">Author: " + authorBuilder + "</div>");
+                    out.println("<div class=\"text_details\">ISBN: " + st.getString("ISBN") + "</div>");
+                    out.println("<div class=\"text_details\">Cost: $" + st.getString("price") +"</div>");
+                    out.println("<div class=\"text_details\">Current Inventory: "+ st.getString("count") + "</div>");
+                    out.println("<div class=\"button_details\"><button type=\"submit\" name=\"add\" Value=\"" + st.getString("ISBN") + "\">Buy Me</button></div>");
+                    out.println("</div></div>");
                     
                     while(st.next()) {
-                        if(k%2==0){
-                            out.println("<div class=\"back2\">");
-                        }else{
-                            out.println("<div class=\"back1\">");
+                        
+                        query = "SELECT * FROM AUTHOR LEFT JOIN BOOK_AUT ON AUTHOR.authorid=BOOK_AUT.aid where BOOK_AUT.ISBN=" + st.getString("ISBN") + ";";
+                        stAuthor = conn.createStatement().executeQuery(query);
+                        
+                        authorBuilder = "";
+                        if(stAuthor.next()) {
+                            authorBuilder = stAuthor.getString("firstname") + " " + stAuthor.getString("lastname");
+                        }
+                    
+                        while(stAuthor.next()) {
+                            authorBuilder = authorBuilder + ", " + stAuthor.getString("firstname") + " " + stAuthor.getString("lastname");
                         }
                         
-                        k = k + 1;
-                        
-                        out.println("<div class=\"cell_1\">" + st.getString("image") + "</div>");
-                        out.println("<div class=\"cell_2\">" + st.getString("title") + " - " + st.getString("firstname") + " " + st.getString("lastname") + "</div>");
-                        out.println("<div class=\"cell_3\">" + st.getString("ISBN") + "</div>");
-                        out.println("<div class=\"cell_4\">Cost</div>");
-                        out.println("<div class=\"cell_5\">"+ st.getString("count") + "</div>");
-                        out.println("<div class=\"cell_6\"><button type=\"submit\" name=\"action\" Value=\"" + st.getString("ISBN") + "\";\">Add To Cart</button></div>");
+                        blob = st.getBlob("image");
+                        bytes = blob.getBytes(1, (int)blob.length());
+                        imgString = Base64.getEncoder().encodeToString(bytes);
+
+                        out.println("<div class=\"pair_float\">");
+                        out.println("<div class=\"book_float\">");
+                        out.println("<img src=\"data:image/jpg;base64," + imgString + "\" style=\"max-height:225px;\">");
                         out.println("</div>");
+
+                        out.println("<div class=\"book_float\">");
+                        out.println("<div class=\"image_text\">Book Details</div>");
+                        out.println("<div class=\"text_details\">Title: " + st.getString("title") + "</div>");
+                        out.println("<div class=\"text_details\">Author: " + authorBuilder + "</div>");
+                        out.println("<div class=\"text_details\">ISBN: " + st.getString("ISBN") + "</div>");
+                        out.println("<div class=\"text_details\">Cost: $" + st.getString("price") +"</div>");
+                        out.println("<div class=\"text_details\">Current Inventory: "+ st.getString("count") + "</div>");
+                        out.println("<div class=\"button_details\"><button type=\"submit\" name=\"add\" Value=\"" + st.getString("ISBN") + "\">Buy Me</button></div>");
+                        out.println("</div></div>");
                     }
 
                     conn.close();
                     
-                    out.println("</form>");
+                    out.println("</div></div></div>");
                 } else
                     out.println("<h1>No Results</h1>");
 
-                out.println("</div>");
-                out.println("</nav>");
-                out.println("</div>");
-                out.println("</div>");
+                out.println("</form></div></div>");
                 out.println("<footer class=\"container-fluid text-center\">");
                 out.println("<p>Byte Bookstore 2017</p>  </br>");
                 out.println("Johns Hopkins University </br>");

@@ -13,12 +13,37 @@ import java.util.Iterator;
  * @author mbenso14
  */
 public class Cart {
-    private ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
+    private final ArrayList<CartItem> cartItems = new ArrayList<>();
+    private boolean inital_synch = false;
+
+    public void clear() {
+        cartItems.clear();
+    }
+
+    public boolean isInital_synch() {
+        return inital_synch;
+    }
+
+    public void setInital_synch(boolean inital_synch) {
+        this.inital_synch = inital_synch;
+    }
     
     public double getTotalCost() {
         double cost = 0;
         for(CartItem c : cartItems) {
             cost = cost + c.getQuantity() * c.getPrice();
+        }
+        
+        return cost;
+    }
+    
+    public double getFinalCost() {
+        double cost = 0;
+        
+        for(CartItem c: cartItems) {
+            if(c.isPurchased()) {
+                cost = cost + c.getQuantity() * c.getPrice();
+            }
         }
         
         return cost;
@@ -49,6 +74,27 @@ public class Cart {
         cartItems.add(cartItem);
     }
 
+        public void addCartItem(String ISBN, String title, String firstname, String lastname, double price, int quantity) {
+        
+        for(CartItem c : cartItems) {
+            if (c.getISBN() != null && c.getISBN().contains(ISBN)) {                
+                c.setQuantity(c.getQuantity() + quantity);
+                return;
+            }
+        }
+        
+        CartItem cartItem = new CartItem();
+
+        cartItem.setISBN(ISBN);
+        cartItem.setQuantity(quantity);
+        cartItem.setLastName(lastname);
+        cartItem.setFirstName(firstname);
+        cartItem.setTitle(title);
+        cartItem.setPrice(price);
+        
+        cartItems.add(cartItem);
+    }
+    
     public void deleteCartItem(String ISBN) {
         Iterator<CartItem> iter = cartItems.iterator();
         
