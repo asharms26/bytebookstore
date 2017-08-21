@@ -77,8 +77,8 @@ public class AccountServlet extends HttpServlet {
                     book.setPrice(Double.valueOf(sanitizedPrice));
 
                     String isbn = "";
-                    for (int i = 0; i < 12; i++) {
-                        int val = (int) Math.ceil(Math.random() * 10);
+                    for (int i = 0; i < 11; i++) {
+                        int val = (int) Math.ceil(Math.random() * 9);
                         isbn += Integer.toString(val);
                     }
                     book.setISBN(isbn);
