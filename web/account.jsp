@@ -91,7 +91,7 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="/ByteBookstore/">Home</a></li>
                         <li><a href="search.html">Search Products</a></li>
                         <li><a href="stores.html">Stores</a></li>
                         <li><a href="contact.html">Contact</a></li>
@@ -99,7 +99,9 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
                         <li><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+                            <% if (request.getSession().getAttribute("user") != null) { %>
                         <li><a href="LoginServlet?tag=logout"><span class="glyphicon glyphicon-return"></span>Logout</a></li>
+                            <% } %>
                     </ul>
                 </div>
             </div>
@@ -256,7 +258,7 @@
                         <h1>Past Orders</h1>
                     </div>
                 </div>
-                
+
             </div>
         </div>
 

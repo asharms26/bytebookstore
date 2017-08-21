@@ -9,7 +9,12 @@
 <%@page import="com.bytebookstore.models.Book"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-    ArrayList<Book> allBooks = (ArrayList) ((new BookDaoImpl()).getAllBookModels(0));
+    ArrayList<Book> allBooks = new ArrayList<>();
+    allBooks = (ArrayList)request.getSession().getAttribute("display-books");
+    if(allBooks == null){
+        allBooks = (ArrayList) ((new BookDaoImpl()).getAllBookModels(0));
+        request.getSession().setAttribute("display-books", allBooks);
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -66,6 +71,9 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="account.jsp"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
                         <li><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+                            <% if (request.getSession().getAttribute("user") != null) { %>
+                        <li><a href="LoginServlet?tag=logout"><span class="glyphicon glyphicon-return"></span>Logout</a></li>
+                        <% } %>
                     </ul>
                 </div>
             </div>
