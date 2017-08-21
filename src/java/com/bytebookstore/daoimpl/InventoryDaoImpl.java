@@ -9,8 +9,8 @@ import com.bytebookstore.dao.InventoryDao;
 import com.bytebookstore.models.Author;
 import com.bytebookstore.models.Book;
 import com.bytebookstore.models.Inventory;
+import com.bytebookstore.models.User;
 import com.bytebookstore.utilities.DBUtility;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Blob;
@@ -18,6 +18,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.List;
 import javax.sql.DataSource;
+import org.apache.tomcat.util.codec.binary.Base64;
 
 /**
  *
@@ -42,18 +43,20 @@ public class InventoryDaoImpl implements InventoryDao{
         return valid;
     }
     
-    public boolean create(Inventory inventory, Book book, Author auth){
+    public boolean create(Inventory inventory, Book book, Author auth, User user){
         boolean valid = true;
         try(Connection conn = DBUtility.ds.getConnection()){
-            CallableStatement cStmt = conn.prepareCall("{call spBookInventoryInsert(?,?,?,?,?)}");
+            CallableStatement cStmt = conn.prepareCall("{call spBookInventoryInsert(?,?,?,?,?,?,?,?)}");
             cStmt.setString(1,book.getISBN());
             cStmt.setString(2, book.getTitle());
-            
-            byte[] istr = Base64.decode(book.getImage());
+            byte[] istr = Base64.decodeBase64(book.getImage());
             InputStream inputStream = new ByteArrayInputStream(istr);
             cStmt.setBinaryStream(3, inputStream);
-            cStmt.setDouble(4, book.getPrice());
-            cStmt.setInt(5, inventory.getInv());
+            cStmt.setString(4, auth.getFirstName());
+            cStmt.setString(5, auth.getLastName());
+            cStmt.setDouble(6, book.getPrice());
+            cStmt.setInt(7,inventory.getInv());
+            cStmt.setInt(8, user.getLogkey_id());
             valid = cStmt.execute();
         } catch(Exception ex){
             System.out.println(ex.getMessage());

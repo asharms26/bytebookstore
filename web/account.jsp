@@ -387,6 +387,7 @@
                         var success = function (response) {
                             hideLoadingGif();
                             $("#modal-content").html("Book has been added!");
+                            showDialog(dialogCloseSuccess);
                         }
                         var error = function (response) {
                             hideLoadingGif();

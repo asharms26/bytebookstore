@@ -63,7 +63,7 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="index.html">Home</a></li>
+                        <li class="active"><a href="/ByteBookstore/">Home</a></li>
                         <li><a href="search.html">Search Products</a></li>
                         <li><a href="stores.html">Stores</a></li>
                         <li><a href="contact.html">Contact</a></li>
@@ -83,7 +83,7 @@
                 <% for (Book book : allBooks) {%>
                 <div class="col-md-4">
                     <div class="thumbnail" style="min-height:400px;">
-                        <img src="data:image/jpg;base64,<%= book.getImage()%>"" alt="...">
+                        <img src="data:image/jpg;base64,<%= book.getImage()%>" class="img img-responsive img-thumbnail" style="max-height:225px;">
                              <div class="caption">
                             <h3><%= book.getTitle()%></h3>
                             <p>Author goes here</p>

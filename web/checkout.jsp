@@ -58,7 +58,7 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="index.html">Home</a></li>
+        <li><a href="/ByteBookstore/">Home</a></li>
         <li><a href="search.html">Search Products</a></li>
         <li><a href="stores.html">Stores</a></li>
         <li><a href="contact.html">Contact</a></li>

@@ -86,12 +86,10 @@ public class AccountServlet extends HttpServlet {
 
                     com.bytebookstore.models.Inventory inventory = new com.bytebookstore.models.Inventory();
                     inventory.setInv(Integer.valueOf((String) request.getParameter("book-inventory")));
-
-                    BookAutDaoImpl bookDao = new BookAutDaoImpl();
+             
                     InventoryDaoImpl inventoryDao = new InventoryDaoImpl();
+                    inventoryDao.create(inventory, book, author, user);
 
-                    inventoryDao.create(inventory, book, author);
-                    bookDao.create(author, book);
                 }
                 break;
             }
