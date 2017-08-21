@@ -14,6 +14,24 @@ public class Book {
     private String title;
     private String image;
     private double price;
+    private Author author = new Author();
+    private Inventory inventory = new Inventory();
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
 
     public String getISBN() {
         return ISBN;

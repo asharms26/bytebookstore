@@ -10,8 +10,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     ArrayList<Book> allBooks = new ArrayList<>();
-    allBooks = (ArrayList)request.getSession().getAttribute("display-books");
-    if(allBooks == null){
+    allBooks = (ArrayList) request.getSession().getAttribute("display-books");
+    if (allBooks == null) {
         allBooks = (ArrayList) ((new BookDaoImpl()).getAllBookModels(0));
         request.getSession().setAttribute("display-books", allBooks);
     }
@@ -73,25 +73,35 @@
                         <li><a href="cart.jsp"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
                             <% if (request.getSession().getAttribute("user") != null) { %>
                         <li><a href="LoginServlet?tag=logout"><span class="glyphicon glyphicon-return"></span>Logout</a></li>
-                        <% } %>
+                            <% } %>
                     </ul>
                 </div>
             </div>
         </nav>
 
         <div class="container">    
-                <% for (Book book : allBooks) {%>
-                <div class="col-md-4">
-                    <div class="thumbnail" style="min-height:400px;">
-                        <img src="data:image/jpg;base64,<%= book.getImage()%>" class="img img-responsive img-thumbnail" style="max-height:225px;">
-                             <div class="caption">
-                            <h3><%= book.getTitle()%></h3>
-                            <p>Author goes here</p>
-                            <p><a href="#" class="btn btn-primary" role="button">Add To Cart</a></p>
-                        </div>
+            <h1 align="center">Our Books</h1><hr/>
+            <% for (Book book : allBooks) {%>
+            <div class="col-md-4">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><strong><%= book.getTitle()%></strong></h3>
+                        <h6>Price: <%= " $" + book.getPrice() %> | Quantity: <%= book.getInventory().getInv()%></h6>
+                    </div>
+                    <div class="panel-body">
+                        <div class="thumbnail">
+                    <img src="data:image/jpg;base64,<%= book.getImage()%>" class="img img-responsive img-thumbnail" style="height:250px;"/>
+                    <div class="caption" style="text-align:center;">
+                        <p><%= book.getAuthor().getFirstName() + " " + book.getAuthor().getLastName() %></p>
+                        <p><a href="#" class="btn btn-primary" role="button">Add To Cart</a></p>
                     </div>
                 </div>
-                <% }%>
+                    </div>
+                </div>
+                
+            </div>
+            <% }%>
         </div><br>
 
         <footer class="container-fluid text-center">
