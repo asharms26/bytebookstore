@@ -4,13 +4,20 @@
     Author     : wjlax
 --%>
 
+<%@page import="com.bytebookstore.daoimpl.BookDaoImpl"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="com.bytebookstore.models.Book"%>
 <%@page import="com.bytebookstore.models.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     User user = null;
+    ArrayList<Book> books = new ArrayList<>();
     if (request.getSession().getAttribute("user") != null) {
         user = (User) request.getSession().getAttribute("user");
+        BookDaoImpl bookDao = new BookDaoImpl();
+        books = (ArrayList<Book>) bookDao.getAllBookModels(user.getLogkey_id());
     }
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -135,7 +142,7 @@
                         <input class="form-control" type="text" placeholder="Enter First name" name="first-name" required />
                     </div>
                     <div class="form-group">
-                        <label><strong>Second Name</strong></label>
+                        <label><strong>Last Name</strong></label>
                         <input class="form-control" type="text" placeholder="Enter Last Name" name="last-name" required />
                     </div>
                     <div class="form-group">
@@ -248,9 +255,26 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="wrapper">
+                    <div class="wrapper" style="max-height:560px;overflow-y:scroll;">
                         <h1>Book Uploads</h1>
+                        <% if (books.size() > 0) { %>
+                        <% for (Book book : books) { %>
+                        <div class="media" style="border-bottom:2px solid grey;padding:5px;padding-top:10px;padding-bottom:10px;">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="media-object" src="data:image/jpg;base64,<%= book.getImage()%>" style="width:50px;height:auto;"/>
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading"><%= book.getTitle() %></h4>
+                                <em><%= book.getAuthor().getFirstName() + " " + book.getAuthor().getLastName() %></em><br/>
+                                <strong>Qty: <%= book.getInventory().getInv() %></strong>
+                            </div>
+                        </div>
+                        <% } %>
+                        <% } else { %>
                         <p style="color:red;">No past uploads yet!</p>
+                        <% } %>
                     </div>
                 </div>
                 <% } %>
@@ -440,8 +464,10 @@
                         var route = "AccountServlet";
                         data.push({"name": "tag", "value": "UPDATE_PASSWORD"});
                         var success = function (response) {
+                            console.log(response);
                             if (response.status == "old_password_wrong") {
                                 alert("Existing password not correct!");
+                                hideLoadingGif();
                             } else {
                                 hideLoadingGif();
                                 $("#modal-content").html("Password updated!");
@@ -449,6 +475,7 @@
                             }
                         }
                         var error = function (response) {
+                            console.log(response);
                             hideLoadingGif();
                         }
                         showLoadingGif();

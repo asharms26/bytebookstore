@@ -55,9 +55,17 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         boolean valid = true;
         try (Connection conn = DBUtility.ds.getConnection()) {
-            String query = "SELECT * FROM bytebooks.BOOK INNER JOIN bytebooks.BOOK_AUT ON bytebooks.BOOK.ISBN = bytebooks.BOOK_AUT.ISBN\n"
+            String query = "";
+            if(id == 0){
+                query = "SELECT * FROM bytebooks.BOOK INNER JOIN bytebooks.BOOK_AUT ON bytebooks.BOOK.ISBN = bytebooks.BOOK_AUT.ISBN\n"
                     + "INNER JOIN bytebooks.INVENTORY ON bytebooks.BOOK.ISBN = bytebooks.INVENTORY.ISBN\n"
                     + "INNER JOIN bytebooks.AUTHOR ON bytebooks.BOOK_AUT.aid = bytebooks.AUTHOR.authorid";
+            } else {
+                query = "SELECT * FROM bytebooks.BOOK INNER JOIN bytebooks.BOOK_AUT ON bytebooks.BOOK.ISBN = bytebooks.BOOK_AUT.ISBN\n"
+                    + "INNER JOIN bytebooks.INVENTORY ON bytebooks.BOOK.ISBN = bytebooks.INVENTORY.ISBN\n"
+                    + "INNER JOIN bytebooks.AUTHOR ON bytebooks.BOOK_AUT.aid = bytebooks.AUTHOR.authorid WHERE bytebooks.BOOK.logkey_id = " + id;
+            }
+
             ResultSet rs = conn.createStatement().executeQuery(query);
             while (rs.next()) {
                 

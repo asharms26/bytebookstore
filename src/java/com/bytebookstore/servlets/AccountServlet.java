@@ -61,6 +61,15 @@ public class AccountServlet extends HttpServlet {
 
                     if (success) {
                         request.getSession().setAttribute("user", newUser);
+                        response.setContentType("application/json");
+                        PrintWriter out = response.getWriter();
+                        out.print("{\"status\":\"success\"}");
+                        out.flush();
+                    } else {
+                        response.setContentType("application/json");
+                        PrintWriter out = response.getWriter();
+                        out.print("{\"status\":\"error\"}");
+                        out.flush();
                     }
                 }
                 break;
@@ -68,10 +77,10 @@ public class AccountServlet extends HttpServlet {
                     RegDataDaoImpl regDataDao = new RegDataDaoImpl();
                     RegData regData = regDataDao.getRegDataModel(user.getLogkey_id());
                     String oldPass = Utility.hashPassword((String) request.getParameter("old-password"));
-                    
+
                     if (regData.getPw().indexOf(oldPass) > -1) {
                         RegData newRegData = new RegData();
-                        String passNew = Utility.hashPassword((String)request.getParameter("new-pass-one"));
+                        String passNew = Utility.hashPassword((String) request.getParameter("new-pass-one"));
                         newRegData.setPw(passNew);
                         newRegData.setLogkey_id(user.getLogkey_id());
                         boolean status = regDataDao.update(newRegData);
@@ -120,13 +129,15 @@ public class AccountServlet extends HttpServlet {
                     InventoryDaoImpl inventoryDao = new InventoryDaoImpl();
                     inventoryDao.create(inventory, book, author, user);
 
+                    response.setContentType("application/json");
+                    PrintWriter out = response.getWriter();
+                    out.print("{\"status\":\"success\"}");
+                    out.flush();
+
                 }
                 break;
             }
-            response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
-            out.print("{\"status\":\"success\"}");
-            out.flush();
+
         }
     }
 
