@@ -68,15 +68,31 @@ public class CartController extends HttpServlet {
                 }
                 
                 if(user != null) {
-                    if(!cart.isInital_synch()){                       
+                    if(!cart.isInital_synch()){
                         iconn = DBUtility.ds.getConnection();
 
                         query = "select logkey_id from USER where email=\"" + user.getEmail() + "\";";
-                        
                         st = iconn.createStatement().executeQuery(query);
 
                         if(st.next()) {
                             user.setLogkey_id(st.getInt("logkey_id"));
+                        }
+
+                        for(int i=0; i<cart.getItemCount(); i++) {
+                            cStmt = iconn.prepareCall("{ call spAddBookToOrder(?,?) }");
+                            cStmt.setInt(1, user.getLogkey_id());
+                            cStmt.setString(2, cart.getCartItem(i).getISBN());
+                                                    
+                            for(int j=0; j<cart.getCartItem(i).getQuantity();j++)
+                                cStmt.executeQuery();
+                        }                        
+                        
+                        query = "select ORDER_LOG.tid from ORDER_LOG WHERE (ORDER_LOG.logkey_id=" + user.getLogkey_id() + " AND ORDER_LOG.status=\"ACTIVE\");";
+                        st = iconn.createStatement().executeQuery(query);
+                        
+                        int tid = 0;
+                        if(st.next()) {
+                            tid = st.getInt("ORDER_LOG.tid");
                         }
                         
                         query = "SELECT USER_ORDER.*,BOOK.title, AUTHOR.firstname, AUTHOR.lastname, INVENTORY.price, INVENTORY.count AS icount FROM USER_ORDER "
@@ -84,29 +100,17 @@ public class CartController extends HttpServlet {
                                 + "LEFT JOIN BOOK_AUT ON BOOK_AUT.ISBN=USER_ORDER.ISBN "
                                 + "LEFT JOIN AUTHOR ON AUTHOR.authorid=BOOK_AUT.aid "
                                 + "LEFT JOIN INVENTORY ON USER_ORDER.ISBN=INVENTORY.ISBN "
-                                + "WHERE USER_ORDER.tid = ("
-                                + "select ORDER_LOG.tid from ORDER_LOG WHERE (ORDER_LOG.logkey_id=" + user.getLogkey_id() + " AND ORDER_LOG.status=\"ACTIVE\")"
-                                + ");";
+                                + "WHERE USER_ORDER.tid = ("+ tid +");";
 
                         st = iconn.createStatement().executeQuery(query);
                         
                         while(st.next()){
-                            
                             cart.addCartItem(st.getString("ISBN"), st.getString("title"), st.getString("firstname"), st.getString("lastname"), st.getDouble("price"), st.getInt("count"));
                             
                             if(cart.getCartItem(st.getString("ISBN")).getQuantity() > st.getInt("icount")) {
                                 cart.getCartItem(st.getString("ISBN")).setQuantity(st.getInt("icount"));
                                 System.out.println("error: can only add max available to cart");
                             }
-                        }
-                                                
-                        for(int i=0; i<cart.getItemCount(); i++) {
-                            cStmt = iconn.prepareCall("{ call spAddBookToOrder(?,?) }");
-                            cStmt.setInt(1, user.getLogkey_id());
-                            cStmt.setString(2, cart.getCartItem(i).getISBN());
-                                                    
-                            for(int j=0; j<cart.getCartItem(i).getQuantity();j++) 
-                                cStmt.executeQuery();
                         }
                         
                         iconn.close();
@@ -154,13 +158,13 @@ public class CartController extends HttpServlet {
                         st = conn.createStatement().executeQuery(query);
                         
                         if(st.next()) {
-                            if(st.getInt("count") < st.getInt("icount")) {
+                            if(st.getInt("count") < st.getInt("icount")) {                           
                                 cart.getCartItem(add).setQuantity(st.getInt("count") + 1);
 
                                 cStmt = conn.prepareCall("{call spUpdateBookOrder(?,?,?)}");
                                 cStmt.setInt(1, user.getLogkey_id());
                                 cStmt.setString(2, add);
-                                cStmt.setInt(3, st.getInt("count") + 1);
+                                cStmt.setInt(3, cart.getCartItem(add).getQuantity());
 
                                 cStmt.executeQuery();                           
                             } else {

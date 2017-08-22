@@ -52,8 +52,6 @@ public class SearchServlet extends HttpServlet {
             byte[] bytes;
             String imgString;
 
-            System.out.println(request.getAttribute("isbn"));
-            
             try {
                 Connection conn = DBUtility.ds.getConnection();
                 
