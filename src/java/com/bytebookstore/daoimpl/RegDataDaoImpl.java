@@ -11,6 +11,8 @@ import com.bytebookstore.models.User;
 import com.bytebookstore.utilities.DBUtility;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 import javax.sql.DataSource;
 
@@ -29,7 +31,7 @@ public class RegDataDaoImpl implements RegDataDao {
     public boolean create(RegData model) {
         boolean valid = true;
         try (Connection conn = DBUtility.ds.getConnection()) {
-            
+
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             valid = false;
@@ -39,7 +41,22 @@ public class RegDataDaoImpl implements RegDataDao {
 
     @Override
     public RegData getRegDataModel(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        RegData regData = new RegData();
+        try (Connection conn = DBUtility.ds.getConnection()) {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM REGDATA WHERE logkey_id = ?");
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+            regData.setLogkey_id(id);
+
+            while (rs.next()) {
+                regData.setPw((String)rs.getString("pw"));
+                break;
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return regData;
     }
 
     @Override
@@ -51,7 +68,7 @@ public class RegDataDaoImpl implements RegDataDao {
     public boolean delete(RegData model) {
         boolean valid = true;
         try (Connection conn = DBUtility.ds.getConnection()) {
-
+            
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             valid = false;
@@ -63,15 +80,18 @@ public class RegDataDaoImpl implements RegDataDao {
     public boolean update(RegData model) {
         boolean valid = true;
         try (Connection conn = DBUtility.ds.getConnection()) {
-
+            PreparedStatement statement = conn.prepareStatement("UPDATE REGDATA SET pw = ? WHERE logkey_id = ?");
+            statement.setString(1, model.getPw());
+            statement.setInt(2, model.getLogkey_id());
+            valid = statement.execute();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             valid = false;
         }
         return valid;
     }
-    
-    public boolean register(RegData regModel, User userModel){
+
+    public boolean register(RegData regModel, User userModel) {
         boolean valid = true;
         try (Connection conn = DBUtility.ds.getConnection()) {
             CallableStatement cStmt = conn.prepareCall("{call spRegdataInsert(?,?,?,?,?)}");

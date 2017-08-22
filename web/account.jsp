@@ -440,7 +440,7 @@
                         var route = "AccountServlet";
                         data.push({"name": "tag", "value": "UPDATE_PASSWORD"});
                         var success = function (response) {
-                            if (response.status == "NOEXIST") {
+                            if (response.status == "old_password_wrong") {
                                 alert("Existing password not correct!");
                             } else {
                                 hideLoadingGif();

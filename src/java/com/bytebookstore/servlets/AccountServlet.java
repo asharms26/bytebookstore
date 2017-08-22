@@ -9,10 +9,13 @@ import com.bytebookstore.daoimpl.AuthorDaoImpl;
 import com.bytebookstore.daoimpl.BookAutDaoImpl;
 import com.bytebookstore.daoimpl.BookDaoImpl;
 import com.bytebookstore.daoimpl.InventoryDaoImpl;
+import com.bytebookstore.daoimpl.RegDataDaoImpl;
 import com.bytebookstore.daoimpl.UserDaoImpl;
 import com.bytebookstore.models.Author;
 import com.bytebookstore.models.Book;
+import com.bytebookstore.models.RegData;
 import com.bytebookstore.models.User;
+import com.bytebookstore.utilities.Utility;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -62,7 +65,34 @@ public class AccountServlet extends HttpServlet {
                 }
                 break;
                 case "UPDATE_PASSWORD": {
-
+                    RegDataDaoImpl regDataDao = new RegDataDaoImpl();
+                    RegData regData = regDataDao.getRegDataModel(user.getLogkey_id());
+                    String oldPass = Utility.hashPassword((String) request.getParameter("old-password"));
+                    
+                    if (regData.getPw().indexOf(oldPass) > -1) {
+                        RegData newRegData = new RegData();
+                        String passNew = Utility.hashPassword((String)request.getParameter("new-pass-one"));
+                        newRegData.setPw(passNew);
+                        newRegData.setLogkey_id(user.getLogkey_id());
+                        boolean status = regDataDao.update(newRegData);
+                        if (!status) {
+                            request.getSession().invalidate();
+                            response.setContentType("application/json");
+                            PrintWriter out = response.getWriter();
+                            out.print("{\"status\":\"success\"}");
+                            out.flush();
+                        } else {
+                            response.setContentType("application/json");
+                            PrintWriter out = response.getWriter();
+                            out.print("{\"status\":\"other_error\"}");
+                            out.flush();
+                        }
+                    } else {
+                        response.setContentType("application/json");
+                        PrintWriter out = response.getWriter();
+                        out.print("{\"status\":\"old_password_wrong\"}");
+                        out.flush();
+                    }
                 }
                 break;
                 case "ADD_BOOK": {
@@ -86,7 +116,7 @@ public class AccountServlet extends HttpServlet {
 
                     com.bytebookstore.models.Inventory inventory = new com.bytebookstore.models.Inventory();
                     inventory.setInv(Integer.valueOf((String) request.getParameter("book-inventory")));
-             
+
                     InventoryDaoImpl inventoryDao = new InventoryDaoImpl();
                     inventoryDao.create(inventory, book, author, user);
 
