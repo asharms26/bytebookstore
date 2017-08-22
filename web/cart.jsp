@@ -127,7 +127,7 @@
     <%
     if(cart.getItemCount()>0) {
         out.println("<br><br><br>");
-        out.println("<input type=\"button\" name=\"pay\" VALUE=\"Secure Check Out\" onclick=\"window.location='https://localhost:8443/ByteBookstore/checkout.jsp';\">");
+        out.println("<input type=\"button\" name=\"pay\" VALUE=\"Secure Check Out\" onclick=\"window.location='checkout.jsp';\">");
     }
 
     %>
