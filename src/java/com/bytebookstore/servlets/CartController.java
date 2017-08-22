@@ -247,7 +247,7 @@ public class CartController extends HttpServlet {
 
                 session.setAttribute("cart", cart);
 
-                response.sendRedirect("https://localhost:8443/ByteBookstore/cart.jsp");            
+                response.sendRedirect("cart.jsp");            
             } catch (SQLException ex) {
                 Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
             }
